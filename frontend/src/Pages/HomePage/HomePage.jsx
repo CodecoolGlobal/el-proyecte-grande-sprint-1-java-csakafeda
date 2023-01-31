@@ -1,6 +1,12 @@
-import { Button, Card, Grid } from "@mui/material";
+import {
+  Button,
+  Card,
+  CircularProgress,
+  Grid,
+  LinearProgress,
+} from "@mui/material";
 import { Container } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const URL = "/api/question";
 
@@ -11,9 +17,12 @@ async function fetchQuestion() {
 
 export default function HomePage() {
   const [question, setQuestion] = useState(null);
+  const dataFetchedRef = useRef(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
     fetchQuestion().then((response) => {
       setQuestion(response);
       setLoading(false);
@@ -21,7 +30,9 @@ export default function HomePage() {
   }, []);
 
   return loading ? (
-    <p>Loading gecc!</p>
+    <Container maxWidth="md" align="center">
+      <CircularProgress></CircularProgress>
+    </Container>
   ) : (
     <div>
       <Container maxWidth="md">
