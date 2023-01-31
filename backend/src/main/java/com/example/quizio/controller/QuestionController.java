@@ -18,14 +18,9 @@ public class QuestionController {
 
     @GetMapping("question")
     public QuestionDAO getQuestion() {
-        QuestionDAO newQuestion = null;
-        try {
-            QuestionDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, QuestionDAO[].class);
-            newQuestion = questions[0];
-        } catch (NullPointerException exception) {
-            System.out.println(exception.getMessage());
-        }
-        return newQuestion;
+        return List.of(Objects.requireNonNull(restTemplate
+                        .getForObject(URL + "?limit=" + LIMIT_NUMBER, QuestionDAO[].class)))
+                .get(0);
     }
 
     @GetMapping("question/difficulty/{difficulty}")
@@ -35,11 +30,11 @@ public class QuestionController {
                 .get(0);
     }
 
-    /*@GetMapping("question/tag/{tag}")
-    public QuestionDAO getQuestionByTag(@PathVariable String tag) {
+    @GetMapping("question/category/{category}")
+    public QuestionDAO getQuestionByCategory(@PathVariable String category) {
         return List.of(Objects.requireNonNull(restTemplate
-                        .getForObject(URL + "?limit=" + LIMIT_NUMBER, QuestionDAO[].class)))
+                        .getForObject(URL + "?limit=" + LIMIT_NUMBER + "&categories=" + category, QuestionDAO[].class)))
                 .get(0);
-    }*/
+    }
 
 }
