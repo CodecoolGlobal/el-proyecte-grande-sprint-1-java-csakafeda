@@ -13,6 +13,7 @@ public class QuestionController {
 
     @GetMapping("question")
     public QuestionDAO getQuestion() {
+        System.out.println("GET");
         QuestionDAO newQuestion = null;
         try {
             RestTemplate restTemplate = new RestTemplate();
