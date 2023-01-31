@@ -1,4 +1,5 @@
 import { Button, Card, Grid } from "@mui/material";
+import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 
 const URL = "/api/question";
@@ -15,6 +16,7 @@ export default function HomePage() {
   useEffect(() => {
     fetchQuestion().then((response) => {
       setQuestion(response);
+      console.log(response);
       setLoading(false);
     });
   }, []);
@@ -23,19 +25,21 @@ export default function HomePage() {
     <p>Loading gecc!</p>
   ) : (
     <div>
-      <h1>{question.question}</h1>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        <Grid item xs={6}>
-          <Button>{question.correctAnswer}</Button>
+      <Container maxWidth="md">
+        <h1 align="center">{question.question}</h1>
+        <Grid
+          container
+          textAlign="center"
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        >
+          {question.answers.map((answer, index) => (
+            <Grid key={index} item xs={6}>
+              <Button key={index}>{answer}</Button>
+            </Grid>
+          ))}
         </Grid>
-        {question.incorrectAnswers.map((answer, index) => (
-          <Grid item xs={6}>
-            <Button key={index} id={index}>
-              {answer}
-            </Button>
-          </Grid>
-        ))}
-      </Grid>
+      </Container>
     </div>
   );
 }
