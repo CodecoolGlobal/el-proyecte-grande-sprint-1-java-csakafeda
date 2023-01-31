@@ -16,7 +16,6 @@ export default function HomePage() {
   useEffect(() => {
     fetchQuestion().then((response) => {
       setQuestion(response);
-      console.log(response);
       setLoading(false);
     });
   }, []);
