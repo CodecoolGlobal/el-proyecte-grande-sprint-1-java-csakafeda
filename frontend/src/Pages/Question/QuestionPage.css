@@ -1,0 +1,51 @@
+.counter>* {
+    font-size: x-large;
+    font-weight: 500;
+
+    width: 3rem;
+    height: 3rem;
+    padding: .2rem;
+
+    border: 1px solid var(--primary-color);
+    border-radius: 100%;
+
+    animation: counter 2s infinite ease-in-out;
+
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    user-select: none;
+}
+
+@keyframes counter {
+    0% {
+        background-color: var(--primary-color);
+        color: var(--background-color)
+    }
+    3% {
+        background-color: var(--background-color);
+        color: var(--primary-color)
+    }
+    50% {
+        background-color: var(--background-color);
+        color: var(--primary-color)
+    }
+    53% {
+        background-color: var(--primary-color);
+        color: var(--background-color)
+    }
+    100% {
+        background-color: var(--primary-color);
+        color: var(--background-color)
+    }
+}
+
+.counter {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 2rem;
+}
