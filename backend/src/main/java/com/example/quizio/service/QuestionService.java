@@ -1,7 +1,10 @@
 package com.example.quizio.service;
 
+import com.example.quizio.controller.dao.AnswerDAO;
 import com.example.quizio.controller.dao.QuestionDAO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
+import com.example.quizio.database.AnswerDB;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,8 +17,11 @@ import java.util.Random;
 public class QuestionService {
     private static final int LIMIT_NUMBER = 1;
     private static final String URL = "https://the-trivia-api.com/api/questions";
+    private final AnswerDB answerDB;
 
-    public QuestionService() {
+    @Autowired
+    public QuestionService(AnswerDB answerDB) {
+        this.answerDB = answerDB;
     }
 
     public QuestionDAO provideQuestionWithAllAnswers() {
@@ -23,21 +29,24 @@ public class QuestionService {
 
         List<String> answers = new ArrayList<>();
         Collections.addAll(answers, questionFromApi.incorrectAnswers());
+
         Random random = new Random();
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
 
-        QuestionDAO question = new QuestionDAO(
+        AnswerDAO answer = new AnswerDAO(questionFromApi.id(), randomIndex);
+
+        answerDB.addToAnswerDB(answer);
+
+        return new QuestionDAO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
                 answers.toArray(new String[4])),
                 questionFromApi.question());
-
-        return question;
     }
 
     public TriviaApiDAO getQuestionFromTriviaApi() {
-        TriviaApiDAO currentQuestion = null;
+        TriviaApiDAO currentQuestion;
         RestTemplate restTemplate = new RestTemplate();
         TriviaApiDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, TriviaApiDAO[].class);
         if (questions == null || questions.length == 0) {
@@ -47,5 +56,6 @@ public class QuestionService {
             return currentQuestion;
         }
     }
+
 
 }
