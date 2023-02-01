@@ -1,6 +1,8 @@
 package com.example.quizio.controller;
 
 import com.example.quizio.controller.dao.QuestionDAO;
+import com.example.quizio.service.QuestionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,12 +14,16 @@ import java.util.Objects;
 
 @RestController
 public class QuestionController {
-    private static final String LIMIT_NUMBER = "1";
-    private static final String URL = "https://the-trivia-api.com/api/questions";
-    private RestTemplate restTemplate = new RestTemplate();
+
+    private final QuestionService questionService = new QuestionService();
+
+    @Autowired
+    public QuestionController(QuestionService questionService) {
+    }
 
     @GetMapping("question")
     public QuestionDAO getQuestion() {
+        return questionService.provideQuestionWithAllAnswers();
         return List.of(Objects.requireNonNull(restTemplate
                         .getForObject(URL + "?limit=" + LIMIT_NUMBER, QuestionDAO[].class)))
                 .get(0);
