@@ -1,5 +1,6 @@
 package com.example.quizio.service;
 
+import com.example.quizio.controller.dao.QuestionDAO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -7,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class QuestionService {
@@ -16,21 +18,22 @@ public class QuestionService {
     public QuestionService() {
     }
 
-    public TriviaApiDAO provideQuestionWithAllAnswers() {
-        TriviaApiDAO question = getQuestionFromTriviaApi();
+    public QuestionDAO provideQuestionWithAllAnswers() {
+        TriviaApiDAO questionFromApi = getQuestionFromTriviaApi();
+
         List<String> answers = new ArrayList<>();
-        answers.add(question.correctAnswer());
-        Collections.addAll(answers, question.incorrectAnswers());
-        Collections.shuffle(answers);
-        String[] allAnswers = answers.toArray(String[]::new);
-        TriviaApiDAO questionWithAllAnswers = new TriviaApiDAO(
-                question.category(), question.id(),
-                null, null,
-                allAnswers, question.question(),
-                question.tags(), question.type(),
-                question.difficulty(), question.regions(),
-                question.isNiche());
-        return questionWithAllAnswers;
+        Collections.addAll(answers, questionFromApi.incorrectAnswers());
+        Random random = new Random();
+        int randomIndex = random.nextInt(3);
+        answers.add(randomIndex, questionFromApi.correctAnswer());
+
+        QuestionDAO question = new QuestionDAO(
+                questionFromApi.category(),
+                questionFromApi.id(), answers.toArray(
+                answers.toArray(new String[4])),
+                questionFromApi.question());
+
+        return question;
     }
 
     public TriviaApiDAO getQuestionFromTriviaApi() {
