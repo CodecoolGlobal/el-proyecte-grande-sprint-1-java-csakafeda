@@ -1,6 +1,6 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dao.QuestionDAO;
+import com.example.quizio.controller.dao.TriviaApiDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,14 +16,14 @@ public class QuestionService {
     public QuestionService() {
     }
 
-    public QuestionDAO provideQuestionWithAllAnswers() {
-        QuestionDAO question = getQuestionFromTriviaApi();
+    public TriviaApiDAO provideQuestionWithAllAnswers() {
+        TriviaApiDAO question = getQuestionFromTriviaApi();
         List<String> answers = new ArrayList<>();
         answers.add(question.correctAnswer());
         Collections.addAll(answers, question.incorrectAnswers());
         Collections.shuffle(answers);
         String[] allAnswers = answers.toArray(String[]::new);
-        QuestionDAO questionWithAllAnswers = new QuestionDAO(
+        TriviaApiDAO questionWithAllAnswers = new TriviaApiDAO(
                 question.category(), question.id(),
                 null, null,
                 allAnswers, question.question(),
@@ -33,10 +33,10 @@ public class QuestionService {
         return questionWithAllAnswers;
     }
 
-    public QuestionDAO getQuestionFromTriviaApi() {
-        QuestionDAO currentQuestion = null;
+    public TriviaApiDAO getQuestionFromTriviaApi() {
+        TriviaApiDAO currentQuestion = null;
         RestTemplate restTemplate = new RestTemplate();
-        QuestionDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, QuestionDAO[].class);
+        TriviaApiDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, TriviaApiDAO[].class);
         if (questions == null || questions.length == 0) {
             throw new IllegalStateException();
         } else {

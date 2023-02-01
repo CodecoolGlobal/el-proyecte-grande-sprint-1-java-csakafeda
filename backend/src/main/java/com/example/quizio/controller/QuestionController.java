@@ -1,6 +1,6 @@
 package com.example.quizio.controller;
 
-import com.example.quizio.controller.dao.QuestionDAO;
+import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ public class QuestionController {
     }
 
     @GetMapping("question")
-    public QuestionDAO getQuestion() {
+    public TriviaApiDAO getQuestion() {
         return questionService.provideQuestionWithAllAnswers();
     }
 }
