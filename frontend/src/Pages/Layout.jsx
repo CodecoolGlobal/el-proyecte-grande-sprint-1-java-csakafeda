@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { flipUserSignInStatus, getUserName, isUserSignedIn } from "../Tools/userTools";
+import { isUserSignedIn } from "../Tools/userTools";
 import "./Layout.css"
 import Button from "@mui/material/Button"
 import { AppBar, Toolbar, Typography } from "@mui/material";
