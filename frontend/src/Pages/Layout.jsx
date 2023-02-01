@@ -16,7 +16,7 @@ export default function Layout() {
             sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
         >
             <Toolbar sx={{ flexWrap: 'wrap' }}>
-                <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
+                <Typography variant="h4" color="inherit" noWrap  sx={{ flexGrow: 1, cursor: "pointer", userSelect: "none" }} onClick={() => navigate("/")}>
                     Quiz.io
                 </Typography>
                 {isUserSignedIn() ?
