@@ -1,5 +1,6 @@
 import { Button, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import Loading from "../../Components/Loading";
 import Counter from "./Counter";
 import PointDisplay from "./PointDisplay";
 import "./QuestionPage.css"
@@ -45,11 +46,7 @@ export default function QuestionPage() {
         }, 1000)
     }
 
-    return isTimeOut ? <Container maxWidth="md" align="center"><h1>You weren't fast enough!</h1></Container> : loading ? (
-        <Container maxWidth="md" align="center">
-            <CircularProgress />
-        </Container>
-    ) : (
+    return isTimeOut ? <Container maxWidth="md" align="center"><h1>You weren't fast enough!</h1></Container> : loading ? <Loading /> : (
         <div>
             <Container maxWidth="md">
                 <h1 align="center">{question.question}</h1>
