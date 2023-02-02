@@ -11,12 +11,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
 public class QuestionService {
     private static final int LIMIT_NUMBER = 1;
     private static final String URL = "https://the-trivia-api.com/api/questions";
+    private RestTemplate restTemplate = new RestTemplate();
     private final AnswerDB answerDB;
 
     @Autowired
@@ -24,10 +26,7 @@ public class QuestionService {
         this.answerDB = answerDB;
     }
 
-    public QuestionDTO provideQuestionWithAllAnswers() {
-        TriviaApiDAO questionFromApi = getQuestionFromTriviaApi();
-
-        System.out.println(questionFromApi.id());
+    public QuestionDTO provideQuestionWithAllAnswers(TriviaApiDAO questionFromApi) {
 
         List<String> answers = new ArrayList<>();
         Collections.addAll(answers, questionFromApi.incorrectAnswers());
@@ -35,13 +34,9 @@ public class QuestionService {
         Random random = new Random();
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
-        System.out.println(randomIndex);
 
         AnswerDTO answer = new AnswerDTO(questionFromApi.id(), randomIndex);
-
-        System.out.println(answer);
         answerDB.addToAnswerDB(answer);
-
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
@@ -50,8 +45,7 @@ public class QuestionService {
     }
 
     public TriviaApiDAO getQuestionFromTriviaApi() {
-        TriviaApiDAO currentQuestion;
-        RestTemplate restTemplate = new RestTemplate();
+        TriviaApiDAO currentQuestion = null;
         TriviaApiDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, TriviaApiDAO[].class);
         if (questions == null || questions.length == 0) {
             throw new IllegalStateException();
@@ -61,5 +55,15 @@ public class QuestionService {
         }
     }
 
+    public TriviaApiDAO getQuestionByDifficulty(String difficulty) {
+        return List.of(Objects.requireNonNull(restTemplate
+                        .getForObject(URL + "?difficulty=" + difficulty + "&limit=" + LIMIT_NUMBER, TriviaApiDAO[].class)))
+                .get(0);
+    }
 
+    public TriviaApiDAO getQuestionsByCategory(String category) {
+        return List.of(Objects.requireNonNull(restTemplate
+                        .getForObject(URL + "?limit=" + LIMIT_NUMBER + "&categories=" + category, TriviaApiDAO[].class)))
+                .get(0);
+    }
 }
