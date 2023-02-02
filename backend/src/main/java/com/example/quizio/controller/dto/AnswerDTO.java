@@ -1,8 +1,8 @@
-package com.example.quizio.controller.dao;
+package com.example.quizio.controller.dto;
 
 import java.util.Objects;
 
-public record AnswerDAO(String questionId,
+public record AnswerDTO(String questionId,
                         Integer answerIndex) {
 
     @Override
@@ -10,7 +10,7 @@ public record AnswerDAO(String questionId,
         if (this == o) return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        AnswerDAO answerDAO = (AnswerDAO) o;
+        AnswerDTO answerDAO = (AnswerDTO) o;
         return Objects.equals(questionId, answerDAO.questionId) && Objects.equals(answerIndex, answerDAO.answerIndex);
     }
 

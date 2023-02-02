@@ -1,6 +1,6 @@
-package com.example.quizio.controller.dao;
+package com.example.quizio.controller.dto;
 
-public record QuestionDAO(String category,
+public record QuestionDTO(String category,
                           String id,
                           String[] answers,
                           String question) {

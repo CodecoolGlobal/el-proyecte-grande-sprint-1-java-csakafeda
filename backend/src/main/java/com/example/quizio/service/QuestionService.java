@@ -1,7 +1,7 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dao.AnswerDAO;
-import com.example.quizio.controller.dao.QuestionDAO;
+import com.example.quizio.controller.dto.AnswerDTO;
+import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.database.AnswerDB;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,10 @@ public class QuestionService {
         this.answerDB = answerDB;
     }
 
-    public QuestionDAO provideQuestionWithAllAnswers() {
+    public QuestionDTO provideQuestionWithAllAnswers() {
         TriviaApiDAO questionFromApi = getQuestionFromTriviaApi();
+
+        System.out.println(questionFromApi.id());
 
         List<String> answers = new ArrayList<>();
         Collections.addAll(answers, questionFromApi.incorrectAnswers());
@@ -33,12 +35,14 @@ public class QuestionService {
         Random random = new Random();
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
+        System.out.println(randomIndex);
 
-        AnswerDAO answer = new AnswerDAO(questionFromApi.id(), randomIndex);
+        AnswerDTO answer = new AnswerDTO(questionFromApi.id(), randomIndex);
 
+        System.out.println(answer);
         answerDB.addToAnswerDB(answer);
 
-        return new QuestionDAO(
+        return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
                 answers.toArray(new String[4])),

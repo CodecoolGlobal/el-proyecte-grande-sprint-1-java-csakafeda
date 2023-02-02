@@ -1,6 +1,6 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dao.AnswerDAO;
+import com.example.quizio.controller.dto.AnswerDTO;
 import com.example.quizio.database.AnswerDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +17,8 @@ public class AnswerService {
         this.answerDB = answerDB;
     }
 
-    public Boolean isAnswerCorrect(AnswerDAO userAnswer) {
-        Set<AnswerDAO> answers = answerDB.getCorrectAnswers();
-        for (AnswerDAO answer : answers) {
-            if (answer.equals(userAnswer)) {
-                System.out.println("Good answer!");
-                return true;
-            }
-        }
-        System.out.println("nope");
-        return false;
+    public int correctAnswerProvider(AnswerDTO userAnswer) {
+        return answerDB.getCorrectAnswers()
+                .stream().filter(answerDTO -> answerDTO.equals(userAnswer)).findFirst().get().answerIndex();
     }
 }

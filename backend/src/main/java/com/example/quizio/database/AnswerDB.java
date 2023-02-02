@@ -1,6 +1,6 @@
 package com.example.quizio.database;
 
-import com.example.quizio.controller.dao.AnswerDAO;
+import com.example.quizio.controller.dto.AnswerDTO;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
@@ -9,17 +9,17 @@ import java.util.Set;
 @Repository
 public class AnswerDB {
 
-    Set<AnswerDAO> correctAnswers;
+    Set<AnswerDTO> correctAnswers;
 
     public AnswerDB() {
         correctAnswers = new HashSet<>();
     }
 
-    public Set<AnswerDAO> getCorrectAnswers() {
+    public Set<AnswerDTO> getCorrectAnswers() {
         return correctAnswers;
     }
 
-    public void addToAnswerDB(AnswerDAO answer) {
+    public void addToAnswerDB(AnswerDTO answer) {
         correctAnswers.add(answer);
     }
 }
