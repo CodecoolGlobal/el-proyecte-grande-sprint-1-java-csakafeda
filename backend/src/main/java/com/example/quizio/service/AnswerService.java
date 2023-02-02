@@ -5,6 +5,7 @@ import com.example.quizio.database.AnswerDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 @Service
@@ -18,7 +19,9 @@ public class AnswerService {
     }
 
     public int correctAnswerProvider(AnswerDTO userAnswer) {
-        return answerDB.getCorrectAnswers()
-                .stream().filter(answerDTO -> answerDTO.equals(userAnswer)).findFirst().get().answerIndex();
+        String userAnswerId = userAnswer.questionId();
+        return Integer.parseInt(answerDB.getCorrectAnswers()
+                .stream().filter(answerDTO -> answerDTO.questionId()
+                        .equals(userAnswerId)).findFirst().orElseThrow().questionId());
     }
 }
