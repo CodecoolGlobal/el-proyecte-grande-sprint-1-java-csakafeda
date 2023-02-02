@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 public class QuestionController {
 
@@ -23,14 +22,20 @@ public class QuestionController {
         return questionService.provideQuestionWithAllAnswers(questionService.getQuestionFromTriviaApi());
     }
 
-    @GetMapping("question/difficulty/{difficulty}")
+    @GetMapping("question/{difficulty}")
     public QuestionDTO getQuestionByDifficulty(@PathVariable String difficulty) {
         return questionService.provideQuestionWithAllAnswers(questionService.getQuestionByDifficulty(difficulty));
     }
 
-    @GetMapping("question/category/{category}")
+    @GetMapping("question/{category}")
     public QuestionDTO getQuestionByCategory(@PathVariable String category) {
         return questionService.provideQuestionWithAllAnswers(questionService.getQuestionsByCategory(category));
     }
+
+    /*@GetMapping("categories")
+    public CategoryDAO[] getAllCategory() {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForObject("https://the-trivia-api.com/api/categories", CategoryDAO[].class);
+    }*/
 
 }
