@@ -5,8 +5,6 @@ import com.example.quizio.database.AnswerDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 @Service
 public class AnswerService {
 
@@ -18,7 +16,9 @@ public class AnswerService {
     }
 
     public int correctAnswerProvider(AnswerDTO userAnswer) {
+        String userAnswerId = userAnswer.questionId();
         return answerDB.getCorrectAnswers()
-                .stream().filter(answerDTO -> answerDTO.equals(userAnswer)).findFirst().get().answerIndex();
+                .stream().filter(answerDTO -> answerDTO.questionId()
+                        .equals(userAnswerId)).findFirst().orElseThrow().answerIndex();
     }
 }
