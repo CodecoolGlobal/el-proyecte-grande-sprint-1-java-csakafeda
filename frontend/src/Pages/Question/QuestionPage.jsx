@@ -35,24 +35,36 @@ export default function QuestionPage() {
         fetchQuestion()
     }, [timeLeft, loading, correctAnswerIndex]);
 
-    const submitAnswerAndGetCorrectIndex = index => {
-        console.log(`I see that you clicked the answer on index ${index}, but unfortunately I don't know which is correct. For the time, I'll say its on index 0!`);
-        return 0;
+    const submitAnswerAndGetCorrectIndex = async index => {
+        const resp = await fetch("/api/answer", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({
+                questionId: question.id,
+                answerIndex: index
+            })
+        });
+        const data = await resp.json();
+        console.log(data);
+        return data;
     }
 
     const handleAnswerSubmit = index => {
         if (correctAnswerIndex !== null) return;
         setIsFinished(true);
-        const correctAnswer = submitAnswerAndGetCorrectIndex(index);
-        setCorrectAnswerIndex(correctAnswer);
-        if (correctAnswer === index) {
-            setPoints(points + 50 + (timeLeft / TIME_FOR_QUESTION) * 50);
-        }
-        setTimeout(() => {
-            setCorrectAnswerIndex(null);
-            setLoading(true);
-            fetchQuestion().then(() => setIsFinished(false))
-        }, 3000);
+        submitAnswerAndGetCorrectIndex(index).then(correctAnswer => {
+            setCorrectAnswerIndex(correctAnswer);
+            if (correctAnswer === index) {
+                setPoints(points + 50 + (timeLeft / TIME_FOR_QUESTION) * 50);
+            }
+            setTimeout(() => {
+                setCorrectAnswerIndex(null);
+                setLoading(true);
+                fetchQuestion().then(() => setIsFinished(false))
+            }, 3000);
+        })
     }
 
     const handleTick = tickObject => timeLeft = tickObject.total;
