@@ -12,7 +12,7 @@ function App() {
   const theme = createTheme(themeOptions);
 
   return (
-      <StompSessionProvider url={"ws://localhost:8080/"}>
+      <StompSessionProvider url={"^/"}>
     <ThemeProvider theme={theme}>
       <div className="App">
         <Router>
