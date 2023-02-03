@@ -6,6 +6,7 @@ import Layout from './Pages/Layout'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { themeOptions } from './Theme'
 import {StompSessionProvider} from "react-stomp-hooks";
+import QuestionPage from './Pages/Question/QuestionPage';
 
 function App() {
   const theme = createTheme(themeOptions);
@@ -20,6 +21,7 @@ function App() {
             <Route element={<Layout />}>
 
               <Route path='/' element={<HomePage />} />
+              <Route path='/question' element={<QuestionPage />} />
             </Route>
 
           </Routes>
