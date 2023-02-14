@@ -17,7 +17,7 @@ public class AnswerService {
 
     public int correctAnswerProvider(Answer userAnswer) {
         String userAnswerId = userAnswer.getQuestionId();
-        return answerDB.findAll()
+        return answerDB.getCorrectAnswers()
                 .stream().filter(answerDTO -> answerDTO.getQuestionId()
                         .equals(userAnswerId)).findFirst().orElseThrow().getAnswerIndex();
     }
