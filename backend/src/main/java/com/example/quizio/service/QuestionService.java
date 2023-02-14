@@ -39,7 +39,7 @@ public class QuestionService {
                 .questionId(questionFromApi.id())
                 .answerIndex(randomIndex)
                 .build();
-        answerDB.addToAnswerDB(answer);
+        answerDB.save(answer);
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
