@@ -1,6 +1,7 @@
 package com.example.quizio.controller;
 
 import com.example.quizio.controller.dto.Answer;
+import com.example.quizio.controller.dto.AnswerDTO;
 import com.example.quizio.service.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class AnswerController {
     }
 
     @PostMapping("answer")
-    public int getUserAnswer(@RequestBody Answer answer) {
-        return answerService.correctAnswerProvider(answer);
+    public int getUserAnswer(@RequestBody AnswerDTO answer) {
+        return answerService.correctAnswerProvider(Answer.builder().questionId(answer.questionId()).answerIndex(answer.answerIndex()).build());
     }
 }
