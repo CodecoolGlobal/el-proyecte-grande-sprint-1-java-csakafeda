@@ -35,7 +35,10 @@ public class QuestionService {
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
 
-        Answer answer = new Answer(questionFromApi.id(), randomIndex);
+        Answer answer = Answer.builder()
+                .questionId(questionFromApi.id())
+                .answerIndex(randomIndex)
+                .build();
         answerDB.addToAnswerDB(answer);
         return new QuestionDTO(
                 questionFromApi.category(),
