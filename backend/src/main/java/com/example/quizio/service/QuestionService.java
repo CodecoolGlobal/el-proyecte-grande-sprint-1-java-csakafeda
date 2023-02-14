@@ -1,6 +1,6 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dto.AnswerDTO;
+import com.example.quizio.controller.dto.Answer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.database.AnswerDB;
@@ -35,7 +35,7 @@ public class QuestionService {
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
 
-        AnswerDTO answer = new AnswerDTO(questionFromApi.id(), randomIndex);
+        Answer answer = new Answer(questionFromApi.id(), randomIndex);
         answerDB.addToAnswerDB(answer);
         return new QuestionDTO(
                 questionFromApi.category(),

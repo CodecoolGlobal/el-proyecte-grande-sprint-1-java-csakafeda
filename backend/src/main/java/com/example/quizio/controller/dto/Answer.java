@@ -1,16 +1,31 @@
 package com.example.quizio.controller.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Objects;
 
-public record AnswerDTO(String questionId,
-                        Integer answerIndex) {
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Answer {
+
+    @Id
+    private String questionId;
+    private Integer answerIndex;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        AnswerDTO answerDAO = (AnswerDTO) o;
+        Answer answerDAO = (Answer) o;
         return Objects.equals(questionId, answerDAO.questionId) && Objects.equals(answerIndex, answerDAO.answerIndex);
     }
 
