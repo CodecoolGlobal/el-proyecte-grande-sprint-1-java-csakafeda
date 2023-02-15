@@ -18,7 +18,7 @@ import java.util.Random;
 public class QuestionService {
     private static final int LIMIT_NUMBER = 1;
     private static final String URL = "https://the-trivia-api.com/api/questions";
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
     private final AnswerDB answerDB;
 
     @Autowired
@@ -39,7 +39,7 @@ public class QuestionService {
                 .questionId(questionFromApi.id())
                 .answerIndex(randomIndex)
                 .build();
-        answerDB.addToAnswerDB(answer);
+        answerDB.save(answer);
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
@@ -48,7 +48,7 @@ public class QuestionService {
     }
 
     public TriviaApiDAO getQuestionFromTriviaApi() {
-        TriviaApiDAO currentQuestion = null;
+        TriviaApiDAO currentQuestion;
         TriviaApiDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, TriviaApiDAO[].class);
         if (questions == null || questions.length == 0) {
             throw new IllegalStateException();
