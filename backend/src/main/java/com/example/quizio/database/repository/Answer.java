@@ -1,4 +1,4 @@
-package com.example.quizio.controller.dto;
+package com.example.quizio.database.repository;
 
 import lombok.*;
 
