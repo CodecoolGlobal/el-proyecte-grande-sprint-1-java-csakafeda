@@ -1,6 +1,6 @@
 package com.example.quizio.controller;
 
-import com.example.quizio.controller.dto.Answer;
+import com.example.quizio.database.repository.Answer;
 import com.example.quizio.controller.dto.AnswerDTO;
 import com.example.quizio.service.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;

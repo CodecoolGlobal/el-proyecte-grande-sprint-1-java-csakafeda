@@ -1,9 +1,9 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dto.Answer;
+import com.example.quizio.database.repository.Answer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
-import com.example.quizio.database.AnswerDB;
+import com.example.quizio.database.AnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,11 +19,11 @@ public class QuestionService {
     private static final int LIMIT_NUMBER = 1;
     private static final String URL = "https://the-trivia-api.com/api/questions";
     private final RestTemplate restTemplate = new RestTemplate();
-    private final AnswerDB answerDB;
+    private final AnswerRepository answerRepository;
 
     @Autowired
-    public QuestionService(AnswerDB answerDB) {
-        this.answerDB = answerDB;
+    public QuestionService(AnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
     }
 
     public QuestionDTO provideQuestionWithAllAnswers(TriviaApiDAO questionFromApi) {
@@ -39,7 +39,7 @@ public class QuestionService {
                 .questionId(questionFromApi.id())
                 .answerIndex(randomIndex)
                 .build();
-        answerDB.save(answer);
+        answerRepository.save(answer);
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
