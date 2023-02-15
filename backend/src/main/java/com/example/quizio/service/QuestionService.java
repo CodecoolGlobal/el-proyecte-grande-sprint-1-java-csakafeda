@@ -1,6 +1,6 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dto.AnswerDTO;
+import com.example.quizio.controller.dto.Answer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.database.AnswerDB;
@@ -18,7 +18,7 @@ import java.util.Random;
 public class QuestionService {
     private static final int LIMIT_NUMBER = 1;
     private static final String URL = "https://the-trivia-api.com/api/questions";
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
     private final AnswerDB answerDB;
 
     @Autowired
@@ -35,8 +35,11 @@ public class QuestionService {
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
 
-        AnswerDTO answer = new AnswerDTO(questionFromApi.id(), randomIndex);
-        answerDB.addToAnswerDB(answer);
+        Answer answer = Answer.builder()
+                .questionId(questionFromApi.id())
+                .answerIndex(randomIndex)
+                .build();
+        answerDB.save(answer);
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
@@ -45,7 +48,7 @@ public class QuestionService {
     }
 
     public TriviaApiDAO getQuestionFromTriviaApi() {
-        TriviaApiDAO currentQuestion = null;
+        TriviaApiDAO currentQuestion;
         TriviaApiDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, TriviaApiDAO[].class);
         if (questions == null || questions.length == 0) {
             throw new IllegalStateException();
