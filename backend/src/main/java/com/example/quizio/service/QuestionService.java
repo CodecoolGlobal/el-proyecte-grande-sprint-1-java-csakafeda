@@ -1,6 +1,6 @@
 package com.example.quizio.service;
 
-import com.example.quizio.database.repository.Answer;
+import com.example.quizio.database.repository.PlayerAnswer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.database.AnswerRepository;
@@ -35,11 +35,11 @@ public class QuestionService {
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
 
-        Answer answer = Answer.builder()
+        PlayerAnswer playerAnswer = PlayerAnswer.builder()
                 .questionId(questionFromApi.id())
                 .answerIndex(randomIndex)
                 .build();
-        answerRepository.save(answer);
+        answerRepository.save(playerAnswer);
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
