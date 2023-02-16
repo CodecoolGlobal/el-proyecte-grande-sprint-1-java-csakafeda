@@ -1,12 +1,16 @@
 package com.example.quizio.database.repository;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class PlayerGame {
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Score {
     @EmbeddedId
     private PlayerGameId playerGameId;
     private Integer score;

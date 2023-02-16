@@ -27,7 +27,7 @@ public class QuestionController {
     @GetMapping("question")
     public QuestionDTO getQuestion(
             @RequestParam Optional<Difficulty> difficulty,
-            @RequestParam Optional<Category> category,
+            @RequestParam Optional<Category[]> categories,
             @RequestParam Optional<Long> gameId,
             @RequestParam Optional<Integer> index
     ) {
@@ -35,10 +35,13 @@ public class QuestionController {
             throw new BadRequestException("Can't provide only gameId or index. If you provide one, you have to provide the other as well.");
         }
         if (gameId.isPresent()) {
-            // handle get question from game repository
-            return DUMMY_QUESTION;
+            QuestionDTO currentQuestion = questionService.getQuestionOnGameIndex(gameId.get(), index.get());
+            if (currentQuestion == null) {
+                throw new BadRequestException("No game on this id.");
+            }
+            return currentQuestion;
         }
-        return questionService.getSingleQuestionDTO(difficulty, category);
+        return questionService.getSingleQuestionDTO(difficulty, categories);
     }
 
 }
