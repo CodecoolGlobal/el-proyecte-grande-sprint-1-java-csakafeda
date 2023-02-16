@@ -7,7 +7,7 @@ import {
     MenuItem,
     Select,
     OutlinedInput,
-    useTheme
+    useTheme, TextField
 } from "@mui/material";
 import {Container} from "@mui/system";
 import {useNavigate} from "react-router-dom";
@@ -75,6 +75,10 @@ export default function HomePage() {
     }
 
     return <>
+        <Container align="center" sx={{padding: "5rem"}}>
+            <TextField sx={{width: '30rem'}} id="outlined-basic" label="Game search" variant="outlined"
+                       placeholder="Search game by gameid, playername or email "/>
+        </Container>
         <Container align="center" sx={{padding: "5rem"}}>
             <FormControl sx={{m: 1, minWidth: 200}}>
                 <InputLabel id="difficulty-choosing">
