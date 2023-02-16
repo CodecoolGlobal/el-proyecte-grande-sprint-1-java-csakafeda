@@ -41,19 +41,22 @@ public class QuestionService {
         TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, categories);
         return Arrays.stream(questionsFromApi)
                 .map(questionDTO -> {
-                            if (questionRepository.existsById(questionDTO.id())) return questionRepository.getById(questionDTO.id());
-                            Question question = Question.builder()
-                                    .question(questionDTO.question())
-                                    .id(questionDTO.id())
-                                    .incorrectAnswer1(questionDTO.incorrectAnswers()[0])
-                                    .incorrectAnswer2(questionDTO.incorrectAnswers()[1])
-                                    .incorrectAnswer3(questionDTO.incorrectAnswers()[2])
-                                    .correctAnswer(questionDTO.correctAnswer())
-                                    .category(Category.valueOf(questionDTO.category().replace(" ", "_").replace("&", "AND").toUpperCase()))
-                                    .difficulty(Difficulty.valueOf(questionDTO.difficulty().replace(" ", "_").replace("&", "AND").toUpperCase()))
-                                    .build();
+                            if (questionRepository.existsById(questionDTO.id())) {
+                                return questionRepository.getById(questionDTO.id());
+                            } else {
+                                Question question = Question.builder()
+                                        .question(questionDTO.question())
+                                        .id(questionDTO.id())
+                                        .incorrectAnswer1(questionDTO.incorrectAnswers()[0])
+                                        .incorrectAnswer2(questionDTO.incorrectAnswers()[1])
+                                        .incorrectAnswer3(questionDTO.incorrectAnswers()[2])
+                                        .correctAnswer(questionDTO.correctAnswer())
+                                        .category(Category.valueOf(questionDTO.category().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                        .difficulty(Difficulty.valueOf(questionDTO.difficulty().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                        .build();
                                 questionRepository.save(question);
                                 return question;
+                            }
                         }
                 )
                 .toArray(Question[]::new);
