@@ -1,5 +1,6 @@
 package com.example.quizio.controller;
 
+import com.example.quizio.database.repository.PlayerAnswer;
 import com.example.quizio.controller.dto.AnswerDTO;
 import com.example.quizio.service.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,6 @@ public class AnswerController {
 
     @PostMapping("answer")
     public int getUserAnswer(@RequestBody AnswerDTO answer) {
-        return answerService.correctAnswerProvider(answer);
+        return answerService.correctAnswerProvider(PlayerAnswer.builder().questionId(answer.questionId()).answerIndex(answer.answerIndex()).build());
     }
 }

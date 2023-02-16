@@ -1,24 +1,24 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dto.AnswerDTO;
-import com.example.quizio.database.AnswerDB;
+import com.example.quizio.database.repository.PlayerAnswer;
+import com.example.quizio.database.AnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AnswerService {
 
-    private final AnswerDB answerDB;
+    private final AnswerRepository answerRepository;
 
     @Autowired
-    public AnswerService(AnswerDB answerDB) {
-        this.answerDB = answerDB;
+    public AnswerService(AnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
     }
 
-    public int correctAnswerProvider(AnswerDTO userAnswer) {
-        String userAnswerId = userAnswer.questionId();
-        return answerDB.getCorrectAnswers()
-                .stream().filter(answerDTO -> answerDTO.questionId()
-                        .equals(userAnswerId)).findFirst().orElseThrow().answerIndex();
+    public int correctAnswerProvider(PlayerAnswer userPlayerAnswer) {
+        String userAnswerId = userPlayerAnswer.getQuestionId();
+        return answerRepository.findAll()
+                .stream().filter(answerDTO -> answerDTO.getQuestionId()
+                        .equals(userAnswerId)).findFirst().orElseThrow().getAnswerIndex();
     }
 }
