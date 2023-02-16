@@ -1,5 +1,6 @@
 package com.example.quizio.service;
 
+import com.example.quizio.database.QuestionRepository;
 import com.example.quizio.database.repository.PlayerAnswer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
@@ -19,11 +20,15 @@ public class QuestionService {
     private static final String URL = "https://the-trivia-api.com/api/questions";
     private final RestTemplate restTemplate = new RestTemplate();
     private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public QuestionService(AnswerRepository answerRepository) {
+    public QuestionService(AnswerRepository answerRepository, QuestionRepository questionRepository) {
         this.answerRepository = answerRepository;
+        this.questionRepository = questionRepository;
     }
+
+
 
     public QuestionDTO getSingleQuestionDTO(Optional<Difficulty> difficulty, Optional<Category> category) {
         TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, category)[0];
@@ -33,16 +38,21 @@ public class QuestionService {
     public Question[] getMultipleQuestions(int length, Optional<Difficulty> difficulty, Optional<Category> category) {
         TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, category);
         return Arrays.stream(questionsFromApi)
-                .map(question -> Question.builder()
-                        .question(question.question())
-                        .id(question.id())
-                        .incorrectAnswer1(question.incorrectAnswers()[0])
-                        .incorrectAnswer2(question.incorrectAnswers()[1])
-                        .incorrectAnswer3(question.incorrectAnswers()[2])
-                        .correctAnswer(question.correctAnswer())
-                        .category(Category.valueOf(question.category()))
-                        .difficulty(Difficulty.valueOf(question.difficulty()))
-                        .build()
+                .map(questionDTO -> {
+                            if (questionRepository.existsById(questionDTO.id())) return questionRepository.getById(questionDTO.id());
+                            Question question = Question.builder()
+                                    .question(questionDTO.question())
+                                    .id(questionDTO.id())
+                                    .incorrectAnswer1(questionDTO.incorrectAnswers()[0])
+                                    .incorrectAnswer2(questionDTO.incorrectAnswers()[1])
+                                    .incorrectAnswer3(questionDTO.incorrectAnswers()[2])
+                                    .correctAnswer(questionDTO.correctAnswer())
+                                    .category(Category.valueOf(questionDTO.category().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                    .difficulty(Difficulty.valueOf(questionDTO.difficulty().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                    .build();
+                                questionRepository.save(question);
+                                return question;
+                        }
                 )
                 .toArray(Question[]::new);
     }
