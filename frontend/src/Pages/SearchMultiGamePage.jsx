@@ -3,16 +3,14 @@ import {
     TextField
 } from "@mui/material";
 import {Container} from "@mui/system";
-import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
 export default function SearchMultiGamePage() {
-    const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [games, setGames] = useState(null);
 
     const fetchGames = async () => {
-        const res = await fetch(`/api/loadgame?${search}`)
+        const res = await fetch(`/api/loadgame?name=${search}`)
         const data = await res.json();
         console.log(data);
         return data;
@@ -29,7 +27,7 @@ export default function SearchMultiGamePage() {
                        id="outlined-basic"
                        label="Game search"
                        variant="outlined"
-                       placeholder="Search game by game id, player name or email "
+                       placeholder="Search game by player name"
                        onChange={handleSearch}
             />
         </Container>
@@ -38,25 +36,41 @@ export default function SearchMultiGamePage() {
                     size="large"
                     sx={{margin: "4rem", padding: "2rem"}}
                     onClick={() => {
-                        fetchGames(search).then(() => setGames(games));
+                        fetchGames(search).then((res) => {
+                                setGames(res);
+                            }
+                        );
                     }
                     }>
-                Search game
+                Search players games
             </Button>
             <TableContainer align="center">
-                <Table align="center" >
+                <Table align="center">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="left">Player name</TableCell>
                             <TableCell align="left">Game ID</TableCell>
+                            <TableCell align="left">Game Difficulty</TableCell>
                             <TableCell align="left">High score</TableCell>
-                            <Button variant="contained"
-                                    size="large"
-                                    sx={{margin: "2rem", padding: "1rem"}}>Start this game!</Button>
+                            <TableCell align="left"></TableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
-
+                        {games !== null ?
+                            games.map(game => (
+                                    <TableRow key={game.id}>
+                                        <TableCell>{game.id}</TableCell>
+                                        <TableCell>{game.difficulty}</TableCell>
+                                        <TableCell>{game.highscore}</TableCell>
+                                        <Button variant="contained"
+                                                size="large"
+                                                sx={{margin: "2rem", padding: "1rem"}}>Start this game!</Button>
+                                    </TableRow>
+                                )
+                            )
+                            :
+                            <div></div>
+                        }
                     </TableBody>
                 </Table>
             </TableContainer>
