@@ -35,8 +35,11 @@ public class QuestionController {
             throw new BadRequestException("Can't provide only gameId or index. If you provide one, you have to provide the other as well.");
         }
         if (gameId.isPresent()) {
-            // handle get question from game repository
-            return DUMMY_QUESTION;
+            QuestionDTO currentQuestion = questionService.getQuestionOnGameIndex(gameId.get(), index.get());
+            if (currentQuestion == null) {
+                throw new BadRequestException("No game on this id.");
+            }
+            return currentQuestion;
         }
         return questionService.getSingleQuestionDTO(difficulty, category);
     }

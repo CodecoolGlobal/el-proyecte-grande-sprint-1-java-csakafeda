@@ -1,5 +1,7 @@
 package com.example.quizio.service;
 
+import com.example.quizio.controller.exception.BadRequestException;
+import com.example.quizio.database.GameRepository;
 import com.example.quizio.database.QuestionRepository;
 import com.example.quizio.database.repository.PlayerAnswer;
 import com.example.quizio.controller.dto.QuestionDTO;
@@ -21,14 +23,14 @@ public class QuestionService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
+    private final GameRepository gameRepository;
 
     @Autowired
-    public QuestionService(AnswerRepository answerRepository, QuestionRepository questionRepository) {
+    public QuestionService(AnswerRepository answerRepository, QuestionRepository questionRepository, GameRepository gameRepository) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
+        this.gameRepository = gameRepository;
     }
-
-
 
     public QuestionDTO getSingleQuestionDTO(Optional<Difficulty> difficulty, Optional<Category> category) {
         TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, category)[0];
@@ -58,24 +60,43 @@ public class QuestionService {
     }
 
     public QuestionDTO provideQuestionWithAllAnswers(TriviaApiDAO questionFromApi) {
+        return new QuestionDTO(
+                questionFromApi.category(),
+                questionFromApi.id(),
+                answerMixerAndCorrectAnswerSaver(
+                        questionFromApi.id(),
+                        questionFromApi.incorrectAnswers(),
+                        questionFromApi.correctAnswer()),
+                questionFromApi.question());
+    }
 
+    public QuestionDTO provideQuestionWithAllAnswers(Question question) {
+        List<String> incorrectAnswers = List.of(
+                question.getIncorrectAnswer1(),
+                question.getIncorrectAnswer2(),
+                question.getIncorrectAnswer3());
+        return new QuestionDTO(
+                question.getCategory().stringValue,
+                question.getId(),
+                answerMixerAndCorrectAnswerSaver(
+                        question.getId(),
+                        incorrectAnswers.toArray(new String[3]),
+                        question.getCorrectAnswer()),
+                question.getQuestion());
+    }
+
+    private String[] answerMixerAndCorrectAnswerSaver(String questionId, String[] incorrectAnswers, String correctAnswer) {
         List<String> answers = new ArrayList<>();
-        Collections.addAll(answers, questionFromApi.incorrectAnswers());
-
+        Collections.addAll(answers, incorrectAnswers);
         Random random = new Random();
         int randomIndex = random.nextInt(3);
-        answers.add(randomIndex, questionFromApi.correctAnswer());
-
+        answers.add(randomIndex, correctAnswer);
         PlayerAnswer playerAnswer = PlayerAnswer.builder()
-                .questionId(questionFromApi.id())
+                .questionId(questionId)
                 .answerIndex(randomIndex)
                 .build();
         answerRepository.save(playerAnswer);
-        return new QuestionDTO(
-                questionFromApi.category(),
-                questionFromApi.id(), answers.toArray(
-                answers.toArray(new String[4])),
-                questionFromApi.question());
+        return answers.toArray(new String[4]);
     }
 
     private TriviaApiDAO[] getQuestionsFromTriviaApi(int limit, Optional<Difficulty> difficulty, Optional<Category> category) {
@@ -91,5 +112,15 @@ public class QuestionService {
         } else {
             return questions;
         }
+    }
+
+    public QuestionDTO getQuestionOnGameIndex(Long gameId, Integer index) {
+        Optional<Question> question = gameRepository
+                .findById(gameId)
+                .map(game -> game.getQuestions().get(index));
+        if (question.isEmpty()) {
+            throw new BadRequestException("No question on this index.");
+        }
+        return provideQuestionWithAllAnswers(question.get());
     }
 }
