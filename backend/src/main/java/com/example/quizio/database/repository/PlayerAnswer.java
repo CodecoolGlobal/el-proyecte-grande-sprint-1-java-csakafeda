@@ -12,7 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Answer {
+public class PlayerAnswer {
 
     @Id
     private String questionId;
@@ -23,8 +23,8 @@ public class Answer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        Answer answerDAO = (Answer) o;
-        return Objects.equals(questionId, answerDAO.questionId) && Objects.equals(answerIndex, answerDAO.answerIndex);
+        PlayerAnswer playerAnswerDAO = (PlayerAnswer) o;
+        return Objects.equals(questionId, playerAnswerDAO.questionId) && Objects.equals(answerIndex, playerAnswerDAO.answerIndex);
     }
 
     @Override
