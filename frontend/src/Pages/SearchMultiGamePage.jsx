@@ -12,38 +12,46 @@ export default function SearchMultiGamePage() {
     const fetchGames = async () => {
         const res = await fetch(`/api/loadgame?name=${search}`)
         const data = await res.json();
-        console.log(data);
         return data;
     }
 
-    const handleSearch = (e) => {
+    const handleSearch = async () => {
+        try {
+            const res = await fetchGames(search);
+            if (res.length > 0) {
+                setGames(res);
+            } else {
+                alert("Dont have this player. Please provide full player name");
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const handleSearchTyping = (e) => {
         setSearch(e.target.value);
         console.log(search);
     }
 
     return <>
-        <Container align="center" sx={{padding: "5rem"}}>
+        <Container align="center" sx={{padding: "2rem"}}>
             <TextField sx={{width: '30rem'}}
                        id="outlined-basic"
                        label="Game search"
                        variant="outlined"
                        placeholder="Search game by player name"
-                       onChange={handleSearch}
+                       onChange={handleSearchTyping}
             />
         </Container>
-        <Container align="center" sx={{padding: "4rem"}}>
+        <Container align="center" sx={{padding: "0.5rem"}}>
             <Button variant="contained"
-                    size="large"
-                    sx={{margin: "4rem", padding: "2rem"}}
-                    onClick={() => {
-                        fetchGames(search).then((res) => {
-                                setGames(res);
-                            }
-                        );
-                    }
-                    }>
+                    size="small"
+                    sx={{margin: "0.5rem", padding: "1rem"}}
+                    onClick={handleSearch}>
                 Search players games
             </Button>
+        </Container>
+        <Container align="center" sx={{padding: "2rem"}}>
             <TableContainer align="center">
                 <Table align="center">
                     <TableHead>
@@ -52,7 +60,6 @@ export default function SearchMultiGamePage() {
                             <TableCell align="left">Game Difficulty</TableCell>
                             <TableCell align="left">High score</TableCell>
                             <TableCell align="left"></TableCell>
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -63,13 +70,16 @@ export default function SearchMultiGamePage() {
                                         <TableCell>{game.difficulty}</TableCell>
                                         <TableCell>{game.highscore}</TableCell>
                                         <Button variant="contained"
-                                                size="large"
-                                                sx={{margin: "2rem", padding: "1rem"}}>Start this game!</Button>
+                                                align="right"
+                                                size="small"
+                                                sx={{margin: "0.5rem", padding: "0.5rem"}}>
+                                            Start this game!
+                                        </Button>
                                     </TableRow>
                                 )
                             )
                             :
-                            <div></div>
+                            <></>
                         }
                     </TableBody>
                 </Table>
