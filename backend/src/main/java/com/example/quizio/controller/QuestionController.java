@@ -1,14 +1,21 @@
 package com.example.quizio.controller;
 
 import com.example.quizio.controller.dto.QuestionDTO;
+import com.example.quizio.controller.exception.BadRequestException;
+import com.example.quizio.database.enums.Category;
+import com.example.quizio.database.enums.Difficulty;
 import com.example.quizio.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+
 
 @RestController
 public class QuestionController {
+    private final QuestionDTO DUMMY_QUESTION = new QuestionDTO("Science", "63adbd6404c68cc1e14b8e2a", new String[]{"df", "df", "sv", "sfd"}, "What type of tree is known for its 'weeping' shape?)");
 
     private final QuestionService questionService;
 
@@ -18,24 +25,20 @@ public class QuestionController {
     }
 
     @GetMapping("question")
-    public QuestionDTO getQuestion() {
-        return questionService.provideQuestionWithAllAnswers(questionService.getQuestionFromTriviaApi());
+    public QuestionDTO getQuestion(
+            @RequestParam Optional<Difficulty> difficulty,
+            @RequestParam Optional<Category> category,
+            @RequestParam Optional<Long> gameId,
+            @RequestParam Optional<Integer> index
+    ) {
+        if ((gameId.isPresent() && index.isEmpty()) || (gameId.isEmpty() && index.isPresent())) {
+            throw new BadRequestException("Can't provide only gameId or index. If you provide one, you have to provide the other as well.");
+        }
+        if (gameId.isPresent()) {
+            // handle get question from game repository
+            return DUMMY_QUESTION;
+        }
+        return questionService.getSingleQuestion(difficulty, category);
     }
-
-    @GetMapping("question/{difficulty}")
-    public QuestionDTO getQuestionByDifficulty(@PathVariable String difficulty) {
-        return questionService.provideQuestionWithAllAnswers(questionService.getQuestionByDifficulty(difficulty));
-    }
-
-    @GetMapping("question/{category}")
-    public QuestionDTO getQuestionByCategory(@PathVariable String category) {
-        return questionService.provideQuestionWithAllAnswers(questionService.getQuestionsByCategory(category));
-    }
-
-    /*@GetMapping("categories")
-    public CategoryDAO[] getAllCategory() {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject("https://the-trivia-api.com/api/categories", CategoryDAO[].class);
-    }*/
 
 }

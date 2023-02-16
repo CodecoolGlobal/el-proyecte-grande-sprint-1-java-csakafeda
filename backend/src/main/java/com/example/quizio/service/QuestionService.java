@@ -1,29 +1,32 @@
 package com.example.quizio.service;
 
-import com.example.quizio.controller.dto.AnswerDTO;
+import com.example.quizio.database.repository.PlayerAnswer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
-import com.example.quizio.database.AnswerDB;
+import com.example.quizio.database.AnswerRepository;
+import com.example.quizio.database.enums.Category;
+import com.example.quizio.database.enums.Difficulty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class QuestionService {
     private static final int LIMIT_NUMBER = 1;
     private static final String URL = "https://the-trivia-api.com/api/questions";
-    private RestTemplate restTemplate = new RestTemplate();
-    private final AnswerDB answerDB;
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final AnswerRepository answerRepository;
 
     @Autowired
-    public QuestionService(AnswerDB answerDB) {
-        this.answerDB = answerDB;
+    public QuestionService(AnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
+    }
+
+    public QuestionDTO getSingleQuestion(Optional<Difficulty> difficulty, Optional<Category> category) {
+        TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, category)[0];
+        return provideQuestionWithAllAnswers(questionFromApi);
     }
 
     public QuestionDTO provideQuestionWithAllAnswers(TriviaApiDAO questionFromApi) {
@@ -35,8 +38,11 @@ public class QuestionService {
         int randomIndex = random.nextInt(3);
         answers.add(randomIndex, questionFromApi.correctAnswer());
 
-        AnswerDTO answer = new AnswerDTO(questionFromApi.id(), randomIndex);
-        answerDB.addToAnswerDB(answer);
+        PlayerAnswer playerAnswer = PlayerAnswer.builder()
+                .questionId(questionFromApi.id())
+                .answerIndex(randomIndex)
+                .build();
+        answerRepository.save(playerAnswer);
         return new QuestionDTO(
                 questionFromApi.category(),
                 questionFromApi.id(), answers.toArray(
@@ -44,26 +50,18 @@ public class QuestionService {
                 questionFromApi.question());
     }
 
-    public TriviaApiDAO getQuestionFromTriviaApi() {
-        TriviaApiDAO currentQuestion = null;
-        TriviaApiDAO[] questions = restTemplate.getForObject(URL + "?limit=" + LIMIT_NUMBER, TriviaApiDAO[].class);
-        if (questions == null || questions.length == 0) {
+    private TriviaApiDAO[] getQuestionsFromTriviaApi(int limit, Optional<Difficulty> difficulty, Optional<Category> category) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("?limit=").append(limit);
+        difficulty.ifPresent(value -> stringBuilder.append("&difficulty=").append(value.stringValue));
+        category.ifPresent(value -> stringBuilder.append("&categories=").append(value.stringValue));
+
+        TriviaApiDAO[] questions = restTemplate.getForObject(URL + stringBuilder, TriviaApiDAO[].class);
+        if (questions == null || questions.length != limit) {
             throw new IllegalStateException();
         } else {
-            currentQuestion = questions[0];
-            return currentQuestion;
+            return questions;
         }
-    }
-
-    public TriviaApiDAO getQuestionByDifficulty(String difficulty) {
-        return List.of(Objects.requireNonNull(restTemplate
-                        .getForObject(URL + "?difficulty=" + difficulty + "&limit=" + LIMIT_NUMBER, TriviaApiDAO[].class)))
-                .get(0);
-    }
-
-    public TriviaApiDAO getQuestionsByCategory(String category) {
-        return List.of(Objects.requireNonNull(restTemplate
-                        .getForObject(URL + "?limit=" + LIMIT_NUMBER + "&categories=" + category, TriviaApiDAO[].class)))
-                .get(0);
     }
 }

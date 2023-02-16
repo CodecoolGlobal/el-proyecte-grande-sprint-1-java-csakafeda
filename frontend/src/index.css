@@ -1,6 +1,7 @@
 :root {
     --foreground-color: #F3F6FA;
     --background-color: #476464;
+    --primary-color: #f9f9db;
 
 
     color: var(--foreground-color);
