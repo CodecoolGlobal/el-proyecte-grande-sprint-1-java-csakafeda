@@ -6,6 +6,7 @@ import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.database.AnswerRepository;
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
+import com.example.quizio.database.repository.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,9 +25,26 @@ public class QuestionService {
         this.answerRepository = answerRepository;
     }
 
-    public QuestionDTO getSingleQuestion(Optional<Difficulty> difficulty, Optional<Category> category) {
+    public QuestionDTO getSingleQuestionDTO(Optional<Difficulty> difficulty, Optional<Category> category) {
         TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, category)[0];
         return provideQuestionWithAllAnswers(questionFromApi);
+    }
+
+    public Question[] getMultipleQuestions(int length, Optional<Difficulty> difficulty, Optional<Category> category) {
+        TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, category);
+        return Arrays.stream(questionsFromApi)
+                .map(question -> Question.builder()
+                        .question(question.question())
+                        .id(question.id())
+                        .incorrectAnswer1(question.incorrectAnswers()[0])
+                        .incorrectAnswer2(question.incorrectAnswers()[1])
+                        .incorrectAnswer3(question.incorrectAnswers()[2])
+                        .correctAnswer(question.correctAnswer())
+                        .category(Category.valueOf(question.category()))
+                        .difficulty(Difficulty.valueOf(question.difficulty()))
+                        .build()
+                )
+                .toArray(Question[]::new);
     }
 
     public QuestionDTO provideQuestionWithAllAnswers(TriviaApiDAO questionFromApi) {
