@@ -1,4 +1,14 @@
-import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, OutlinedInput, useTheme} from "@mui/material";
+import {
+    Box,
+    Button,
+    Chip,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    OutlinedInput,
+    useTheme
+} from "@mui/material";
 import {Container} from "@mui/system";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
@@ -27,10 +37,11 @@ function getStyles(name, personName, theme) {
 export default function HomePage() {
     const navigate = useNavigate();
     const [difficulty, setDifficulty] = useState("");
-    const [category, setCategory] = useState("");
     const [gameId, setGameId] = useState(0);
     const theme = useTheme();
     const [chosenCategory, setChosenCategory] = useState([]);
+    const [URL, setURL] = useState("");
+
     const categories = [
         "all",
         "arts_and_literature",
@@ -44,31 +55,31 @@ export default function HomePage() {
         "society_and_culture",
         "sport_and_leisure"
     ];
-    const handleChange = (event) => {
-        const {
-            target: {value},
-        } = event;
-        setChosenCategory(
-            typeof value === 'string' ? value.split(',') : value,
-        );
+    const handleCategoryChange = (event) => {
+        const {target: {value}} = event;
+        setChosenCategory(typeof value === 'string' ? value.split(',') : value);
+        console.log(value);
     };
-
-    const postFetchCategoryAndDifficulty = async () => {
-        const res = await fetch(`api/question?difficulty=${difficulty.toUpperCase()}&category=${category.toUpperCase()}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const gameId = await res.json();
-        console.log(gameId);
-        return gameId;
-    }
 
     const handleDifficultyChange = (event) => {
         console.log((event.target.value).toUpperCase());
         setDifficulty((event.target.value));
     };
+
+    const getCategoryAndDifficultySearchParam = (e) => {
+        console.log(difficulty);
+        console.log(chosenCategory.length)
+
+        if ((difficulty !== "" && chosenCategory.length !== 0) || (difficulty !== "all" && chosenCategory[0] !== "all")) {
+            return `?difficulty=${difficulty.toUpperCase()}&category=${chosenCategory[0].toUpperCase()}`;
+        } else if (chosenCategory.length > 0 || chosenCategory[0] === "all") {
+            return `?category=${chosenCategory[0].toUpperCase()}`;
+        } else if (difficulty !== "" || difficulty !== "all") {
+            return `?difficulty=${difficulty.toUpperCase()}`;
+        } else {
+            return"";
+        }
+    }
 
     return <>
         <Container align="center" sx={{padding: "5rem"}}>
@@ -96,7 +107,7 @@ export default function HomePage() {
                     id="categories"
                     multiple
                     value={chosenCategory}
-                    onChange={handleChange}
+                    onChange={handleCategoryChange}
                     input={<OutlinedInput id="select-multiple-category" label="categories"/>}
                     renderValue={(selected) => (
                         <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
@@ -121,14 +132,19 @@ export default function HomePage() {
         </Container>
 
         <Container align="center" sx={{padding: "4rem"}}>
-            <Button variant="contained" size="large" onClick={() => {
-                navigate("question-single/");
+            <Button variant="contained" size="large" onClick={(e) => {
+                setURL(getCategoryAndDifficultySearchParam(e));
+                console.log(getCategoryAndDifficultySearchParam());
+                navigate({
+                    pathname: "/question-single",
+                    search: getCategoryAndDifficultySearchParam()
+                });
             }
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" gameid={gameId} onClick={() => {
-                postFetchCategoryAndDifficulty().then((r) => {
+            <Button variant="contained" size="large" gameid={gameId} onClick={(e) => {
+                getCategoryAndDifficultySearchParam(e).then((r) => {
                     setGameId(r);
                     navigate("question-multi/");
                 });

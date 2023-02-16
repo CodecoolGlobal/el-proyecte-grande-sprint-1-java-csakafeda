@@ -4,13 +4,12 @@ import Loading from "../../Components/Loading";
 import Counter from "./Counter";
 import PointDisplay from "./PointDisplay";
 import "./QuestionPage.css"
-
-const URL = "/api/question";
-
+import {useParams, useSearchParams} from "react-router-dom";
 
 export default function QuestionPageSingle() {
     const [question, setQuestion] = useState(null);
     const dataFetchedRef = useRef(false);
+    //const [searchParams, setSearchParams]= useSearchParams();
 
     const [loading, setLoading] = useState(true);
     const [isTimeOut, setIsTimeOut] = useState(false);
@@ -23,10 +22,13 @@ export default function QuestionPageSingle() {
     let timeLeft = TIME_FOR_QUESTION;
 
     async function fetchQuestion() {
-        const response = await fetch(URL);
+
+        const response = await fetch("/api/question");
         const data = await response.json();
         setQuestion(data);
         setLoading(false);
+        console.log(question);
+
     }
 
     useEffect(() => {
@@ -47,7 +49,6 @@ export default function QuestionPageSingle() {
             })
         });
         const data = await resp.json();
-        console.log(data);
         return data;
     }
 
