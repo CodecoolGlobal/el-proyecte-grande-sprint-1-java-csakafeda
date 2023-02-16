@@ -1,5 +1,7 @@
 package com.example.quizio.database.repository;
 
+import com.example.quizio.database.enums.Category;
+import com.example.quizio.database.enums.Difficulty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +20,6 @@ public class Question {
     private String incorrectAnswer1;
     private String incorrectAnswer2;
     private String incorrectAnswer3;
-    private String category;
-    private String difficulty;
+    private Category category;
+    private Difficulty difficulty;
 }

@@ -1,11 +1,13 @@
 package com.example.quizio.service;
 
+import com.example.quizio.database.QuestionRepository;
 import com.example.quizio.database.repository.PlayerAnswer;
 import com.example.quizio.controller.dto.QuestionDTO;
 import com.example.quizio.controller.dao.TriviaApiDAO;
 import com.example.quizio.database.AnswerRepository;
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
+import com.example.quizio.database.repository.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,15 +20,41 @@ public class QuestionService {
     private static final String URL = "https://the-trivia-api.com/api/questions";
     private final RestTemplate restTemplate = new RestTemplate();
     private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public QuestionService(AnswerRepository answerRepository) {
+    public QuestionService(AnswerRepository answerRepository, QuestionRepository questionRepository) {
         this.answerRepository = answerRepository;
+        this.questionRepository = questionRepository;
     }
 
-    public QuestionDTO getSingleQuestion(Optional<Difficulty> difficulty, Optional<Category> category) {
+
+
+    public QuestionDTO getSingleQuestionDTO(Optional<Difficulty> difficulty, Optional<Category> category) {
         TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, category)[0];
         return provideQuestionWithAllAnswers(questionFromApi);
+    }
+
+    public Question[] getMultipleQuestions(int length, Optional<Difficulty> difficulty, Optional<Category> category) {
+        TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, category);
+        return Arrays.stream(questionsFromApi)
+                .map(questionDTO -> {
+                            if (questionRepository.existsById(questionDTO.id())) return questionRepository.getById(questionDTO.id());
+                            Question question = Question.builder()
+                                    .question(questionDTO.question())
+                                    .id(questionDTO.id())
+                                    .incorrectAnswer1(questionDTO.incorrectAnswers()[0])
+                                    .incorrectAnswer2(questionDTO.incorrectAnswers()[1])
+                                    .incorrectAnswer3(questionDTO.incorrectAnswers()[2])
+                                    .correctAnswer(questionDTO.correctAnswer())
+                                    .category(Category.valueOf(questionDTO.category().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                    .difficulty(Difficulty.valueOf(questionDTO.difficulty().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                    .build();
+                                questionRepository.save(question);
+                                return question;
+                        }
+                )
+                .toArray(Question[]::new);
     }
 
     public QuestionDTO provideQuestionWithAllAnswers(TriviaApiDAO questionFromApi) {
