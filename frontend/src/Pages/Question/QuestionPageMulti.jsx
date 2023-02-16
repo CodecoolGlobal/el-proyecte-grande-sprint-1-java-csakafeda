@@ -19,9 +19,9 @@ export default function QuestionPageSingle() {
     const [newGame, setNewGame] = useState(true);
     const [endGame, setEndGame] = useState(false);
     const [gameId, setGameId] = useState(0);
-    const [index, setIndex] = useState(0);
+    const index = useRef(0);
     const QUESTION_NUMBER = 10;
-    const PLAYER_ID = 26;2
+    const PLAYER_ID = 1;
 
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
@@ -58,21 +58,19 @@ export default function QuestionPageSingle() {
                 setGameId(res);
                 })
         }
-        if (index < QUESTION_NUMBER) {
-            fetchNextQuestion(index).then(() => setIndex(index + 1));
+    }, [timeLeft, loading, correctAnswerIndex]);
+
+    useEffect(() => {
+        if (gameId !== 0 && index < QUESTION_NUMBER) {
+            fetchNextQuestion().then((res) => {
+                setQuestion(res);
+                setLoading(false);
+                index.current = index + 1;
+            });
         } else {
             saveScore().then(() => setEndGame(true));
         }
-    }, [timeLeft, loading, correctAnswerIndex, question]);
-
-    useEffect(() => {
-        if (gameId !== 0) {
-            fetchNextQuestion().then(res => {
-                setQuestion(res);
-                setLoading(false);
-            })
-        }
-    }, [gameId, index])
+    }, [question, index])
 
     const submitAnswerAndGetCorrectIndex = async index => {
         const resp = await fetch("/api/answer", {
