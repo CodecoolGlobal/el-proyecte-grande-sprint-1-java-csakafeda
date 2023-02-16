@@ -19,14 +19,14 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private Player creator;
     @ElementCollection
     private Set<Category> categories;
     private Difficulty difficulty;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Question> questions;
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private Set<Score> players;
 }
