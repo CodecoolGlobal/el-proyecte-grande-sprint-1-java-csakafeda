@@ -16,22 +16,62 @@ export default function QuestionPageSingle() {
     const [points, setPoints] = useState(0);
     const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
 
+    const [newGame, setNewGame] = useState(true);
+    const [endGame, setEndGame] = useState(false);
     const [gameId, setGameId] = useState(0);
     const [index, setIndex] = useState(0);
+    const QUESTION_NUMBER = 10;
+    const PLAYER_ID = 1;
 
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
 
     async function fetchNextQuestion(index) {
-        const res = await fetch(`api/question?gameId=${gameId}&index=${index}`);
-        //return question
+        const baseUrl = "/api/question"
+        const res = await fetch(`${baseUrl}?gameId=${gameId}&index=${index}`);
+        const data = await res.json();
+        setQuestion(data);
+        setLoading(false);
+    }
+
+    async function createNewGame() {
+        const baseUrl = "/api/newgame";
+        const res = await fetch(`${baseUrl}?createdBy=${PLAYER_ID}`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return res.json();
+    }
+
+    async function saveScore() {
+        const baseUrl = "/api/playedgame";
+        const res = await fetch(`${baseUrl}?gameId=${gameId}&playerId=${PLAYER_ID}&score=${points}`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        return res.statusText;
     }
 
     useEffect(() => {
+        if (newGame) {
+            createNewGame().then(res => {
+                setGameId(res);
+                setNewGame(false);
+            })
+        }
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
-        setIndex(index+1);
-        fetchNextQuestion();
+        if (index < QUESTION_NUMBER) {
+            fetchNextQuestion();
+            setIndex(index + 1);
+        } else {
+            setEndGame(true);
+            saveScore();
+        }
     }, [timeLeft, loading, correctAnswerIndex]);
 
     const submitAnswerAndGetCorrectIndex = async index => {
@@ -45,8 +85,7 @@ export default function QuestionPageSingle() {
                 answerIndex: index
             })
         });
-        const data = await resp.json();
-        return data;
+        return await resp.json();
     }
 
     const handleAnswerSubmit = index => {
@@ -79,8 +118,7 @@ export default function QuestionPageSingle() {
     }
 
     return (
-        <div>
-
+        <div>{endGame ? <h1>GAME OVER</h1> : <div>
             <Container maxWidth="md" sx={{minHeight: 250}}>
                 {isTimeOut ?
                     <Container maxWidth="md" align="center"><h1>You weren't fast enough!</h1></Container> : loading ?
@@ -105,6 +143,7 @@ export default function QuestionPageSingle() {
             </Container>
             <Counter time={TIME_FOR_QUESTION} key={loading} onTick={handleTick} onComplete={handleTimeOut}
                      isFinished={isFinished}/>
+        </div>}
             <PointDisplay points={points}/>
         </div>
     );

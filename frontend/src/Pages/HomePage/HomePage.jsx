@@ -133,11 +133,8 @@ export default function HomePage() {
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" gameid={gameId} onClick={(e) => {
-                getCategoryAndDifficultySearchParam(e).then((r) => {
-                    setGameId(r);
-                    navigate("question-multi/");
-                });
+            <Button variant="contained" size="large" gameid={gameId} onClick={() => {
+                navigate("/question-multi");
             }
             }>
                 Multiplayer game
