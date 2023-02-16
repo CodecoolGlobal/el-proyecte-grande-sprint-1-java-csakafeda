@@ -15,9 +15,9 @@ public class Score {
     private PlayerGameId playerGameId;
     private Integer score;
     @MapsId("playerId")
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player player;
     @MapsId("gameId")
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Game game;
 }
