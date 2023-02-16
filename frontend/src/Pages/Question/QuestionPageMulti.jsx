@@ -21,14 +21,14 @@ export default function QuestionPageSingle() {
     const [gameId, setGameId] = useState(0);
     const [index, setIndex] = useState(0);
     const QUESTION_NUMBER = 10;
-    const PLAYER_ID = 1;
+    const PLAYER_ID = 26;
 
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
 
-    async function fetchNextQuestion(index) {
+    async function fetchNextQuestion(id, index) {
         const baseUrl = "/api/question"
-        const res = await fetch(`${baseUrl}?gameId=${gameId}&index=${index}`);
+        const res = await fetch(`${baseUrl}?gameId=${id}&index=${index}`);
         const data = await res.json();
         setQuestion(data);
         setLoading(false);
@@ -57,20 +57,23 @@ export default function QuestionPageSingle() {
     }
 
     useEffect(() => {
-        if (newGame) {
-            createNewGame().then(res => {
-                setGameId(res);
-                setNewGame(false);
-            })
-        }
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
+        if (newGame) {
+            createNewGame()
+                .then(res => {
+                setNewGame(false);
+                setGameId(res);
+                })
+                .then(async () => {
+                    await fetchNextQuestion(gameId, index);
+                    setIndex(index + 1);
+                })
+        }
         if (index < QUESTION_NUMBER) {
-            fetchNextQuestion();
-            setIndex(index + 1);
+            fetchNextQuestion(index).then(() => setIndex(index + 1));
         } else {
-            setEndGame(true);
-            saveScore();
+            saveScore().then(() => setEndGame(true));
         }
     }, [timeLeft, loading, correctAnswerIndex]);
 
