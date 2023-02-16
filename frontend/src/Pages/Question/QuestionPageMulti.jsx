@@ -19,17 +19,31 @@ export default function QuestionPageSingle() {
     const [newGame, setNewGame] = useState(true);
     const [endGame, setEndGame] = useState(false);
     const [gameId, setGameId] = useState(0);
-    const index = useRef(0);
+    const [index, setIndex] = useState(0);
     const QUESTION_NUMBER = 10;
-    const PLAYER_ID = 1;
+    const PLAYER_ID = 2;
 
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
 
     async function fetchNextQuestion() {
         const baseUrl = "/api/question"
-        const res = await fetch(`${baseUrl}?gameId=${gameId}&index=${index}`);
-        return res.json();
+        if (newGame) {
+            const id = await createNewGame();
+            setGameId(id);
+            setNewGame(false);
+            const res = await fetch(`${baseUrl}?gameId=${id}&index=${index}`);
+            const data = await res.json();
+            setQuestion(data);
+            setLoading(false);
+            setIndex(index + 1);
+        } else {
+            const res = await fetch(`${baseUrl}?gameId=${gameId}&index=${index}`);
+            const data = await res.json();
+            setQuestion(data);
+            setLoading(false);
+            setIndex(index + 1);
+        }
     }
 
     async function createNewGame() {
@@ -51,26 +65,12 @@ export default function QuestionPageSingle() {
     useEffect(() => {
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
-        if (newGame) {
-            createNewGame()
-                .then(res => {
-                setNewGame(false);
-                setGameId(res);
-                })
-        }
-    }, [timeLeft, loading, correctAnswerIndex]);
-
-    useEffect(() => {
-        if (gameId !== 0 && index < QUESTION_NUMBER) {
-            fetchNextQuestion().then((res) => {
-                setQuestion(res);
-                setLoading(false);
-                index.current = index + 1;
-            });
+        if (index < QUESTION_NUMBER) {
+            fetchNextQuestion();
         } else {
             saveScore().then(() => setEndGame(true));
         }
-    }, [question, index])
+    }, [timeLeft, loading, correctAnswerIndex]);
 
     const submitAnswerAndGetCorrectIndex = async index => {
         const resp = await fetch("/api/answer", {
@@ -97,7 +97,11 @@ export default function QuestionPageSingle() {
             setTimeout(() => {
                 setCorrectAnswerIndex(null);
                 setLoading(true);
-                fetchNextQuestion().then(() => setIsFinished(false))
+                if (index < QUESTION_NUMBER) {
+                    fetchNextQuestion().then(() => setIsFinished(false))
+                } else {
+                    saveScore().then(() => setEndGame(true));
+                }
             }, 3000);
         })
     }
@@ -108,7 +112,11 @@ export default function QuestionPageSingle() {
         setIsTimeOut(true);
         setIsFinished(true);
         setLoading(true);
-        fetchNextQuestion();
+        if (index < QUESTION_NUMBER) {
+            fetchNextQuestion();
+        } else {
+            saveScore().then(() => setEndGame(true));
+        }
         setTimeout(() => {
             setIsTimeOut(false);
             setIsFinished(false);
