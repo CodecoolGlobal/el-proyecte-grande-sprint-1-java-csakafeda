@@ -23,8 +23,8 @@ public class GameController {
     public Long createNewMultiGame(
             @RequestParam Long createdBy,
             @RequestParam Optional<Difficulty> difficulty,
-            @RequestParam Optional<Category> category
+            @RequestParam Optional<Category[]> categories
     ) {
-        return gameService.generateNewMultiGameAndReturnGameId(createdBy, difficulty, category);
+        return gameService.generateNewMultiGameAndReturnGameId(createdBy, difficulty, categories);
     }
 }
