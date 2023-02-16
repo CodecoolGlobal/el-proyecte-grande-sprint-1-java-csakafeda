@@ -26,5 +26,5 @@ public class Game {
     @OneToMany
     private List<Question> questions;
     @OneToMany(mappedBy = "game")
-    private Set<PlayerGame> players;
+    private Set<Score> players;
 }

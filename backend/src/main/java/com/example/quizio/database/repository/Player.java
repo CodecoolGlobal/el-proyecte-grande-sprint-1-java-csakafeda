@@ -21,7 +21,7 @@ public class Player {
     private String email;
     private String password;
     @OneToMany(mappedBy = "player")
-    private Set<PlayerGame> playedGames;
+    private Set<Score> playedGames;
     @OneToMany(mappedBy = "creator")
     private Set<Game> createdGames;
 }

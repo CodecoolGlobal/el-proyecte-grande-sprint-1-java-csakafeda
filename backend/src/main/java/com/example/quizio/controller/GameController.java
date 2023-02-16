@@ -19,12 +19,20 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @PostMapping("newgame")
+    @PostMapping("/newgame")
     public Long createNewMultiGame(
             @RequestParam Long createdBy,
             @RequestParam Optional<Difficulty> difficulty,
             @RequestParam Optional<Category[]> categories
     ) {
         return gameService.generateNewMultiGameAndReturnGameId(createdBy, difficulty, categories);
+    }
+
+    @PostMapping("/playedgame")
+    public void storePlayedGame(
+            @RequestParam Long gameId,
+            @RequestParam Long playerId,
+            @RequestParam Integer score) {
+        gameService.saveGameScore(gameId, playerId, score);
     }
 }
