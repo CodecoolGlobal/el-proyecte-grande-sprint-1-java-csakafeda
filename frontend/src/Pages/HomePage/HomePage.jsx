@@ -71,7 +71,7 @@ export default function HomePage() {
                 str += `&category=${category.toUpperCase().replace(/ /g, "_")}`
             }
             return str;
-        } else if (chosenCategory.length > 0) {
+        } else if (chosenCategory.length !== 0) {
             let str = `?category=${chosenCategory[0].toUpperCase().replace(/ /g, "_")}`;
             for (let i = 1; i < chosenCategory.length; i++) {
                 str += `&category=${chosenCategory[i].toUpperCase().replace(/ /g, "_")}`
@@ -136,7 +136,7 @@ export default function HomePage() {
                         <MenuItem
                             key={name}
                             value={name}
-                            style={getStyles(name, chosenCategory, theme)}
+                            style={getStyles(name, categoryToWriteOut, theme)}
                         >
                             {name}
                         </MenuItem>
