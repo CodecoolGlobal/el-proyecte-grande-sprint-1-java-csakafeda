@@ -5,9 +5,6 @@ import Counter from "./Counter";
 import PointDisplay from "./PointDisplay";
 import "./QuestionPage.css"
 
-const URL = "/api/question";
-
-
 export default function QuestionPageSingle() {
     const [question, setQuestion] = useState(null);
     const dataFetchedRef = useRef(false);
@@ -19,20 +16,22 @@ export default function QuestionPageSingle() {
     const [points, setPoints] = useState(0);
     const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
 
+    const [gameId, setGameId] = useState(0);
+    const [index, setIndex] = useState(0);
+
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
 
-    async function fetchQuestion() {
-        const response = await fetch(URL);
-        const data = await response.json();
-        setQuestion(data);
-        setLoading(false);
+    async function fetchNextQuestion(index) {
+        const res = await fetch(`api/question?gameId=${gameId}&index=${index}`);
+        //return question
     }
 
     useEffect(() => {
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
-        fetchQuestion();
+        setIndex(index+1);
+        fetchNextQuestion();
     }, [timeLeft, loading, correctAnswerIndex]);
 
     const submitAnswerAndGetCorrectIndex = async index => {
@@ -47,7 +46,6 @@ export default function QuestionPageSingle() {
             })
         });
         const data = await resp.json();
-        console.log(data);
         return data;
     }
 
@@ -62,7 +60,7 @@ export default function QuestionPageSingle() {
             setTimeout(() => {
                 setCorrectAnswerIndex(null);
                 setLoading(true);
-                fetchQuestion().then(() => setIsFinished(false))
+                fetchNextQuestion().then(() => setIsFinished(false))
             }, 3000);
         })
     }
@@ -73,7 +71,7 @@ export default function QuestionPageSingle() {
         setIsTimeOut(true);
         setIsFinished(true);
         setLoading(true);
-        fetchQuestion();
+        fetchNextQuestion();
         setTimeout(() => {
             setIsTimeOut(false);
             setIsFinished(false);
