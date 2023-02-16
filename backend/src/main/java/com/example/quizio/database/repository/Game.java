@@ -1,5 +1,7 @@
 package com.example.quizio.database.repository;
 
+import com.example.quizio.database.enums.Category;
+import com.example.quizio.database.enums.Difficulty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,8 +20,8 @@ public class Game {
     private Long id;
     @ManyToOne
     private Player creator;
-    private String category;
-    private String difficulty;
+    private Category category;
+    private Difficulty difficulty;
     @OneToMany
     private List<Question> questions;
     @OneToMany(mappedBy = "game")
