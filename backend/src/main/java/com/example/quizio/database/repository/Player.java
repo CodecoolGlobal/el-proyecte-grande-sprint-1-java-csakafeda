@@ -20,6 +20,6 @@ public class Player {
     private String password;
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
     private Set<Score> playedGames;
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator")
     private Set<Game> createdGames;
 }
