@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class GameService {
@@ -30,12 +31,12 @@ public class GameService {
     public Long generateNewMultiGameAndReturnGameId(
             Long createdBy,
             Optional<Difficulty> difficulty,
-            Optional<Category> category
+            Optional<Category[]> categories
     ) {
-        Question[] questions = questionService.getMultipleQuestions(QUESTION_LENGTH, difficulty, category);
+        Question[] questions = questionService.getMultipleQuestions(QUESTION_LENGTH, difficulty, categories);
         Game.GameBuilder gameBuilder = Game.builder().questions(List.of(questions)).creator(playerRepository.getById(createdBy));
         difficulty.ifPresent(gameBuilder::difficulty);
-        category.ifPresent(gameBuilder::category);
+        categories.ifPresent(value -> gameBuilder.categories(Set.of(value)));
         Game game = gameBuilder.build();
         gameRepository.save(game);
         return game.getId();

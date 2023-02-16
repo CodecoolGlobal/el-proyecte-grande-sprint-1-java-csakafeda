@@ -32,13 +32,13 @@ public class QuestionService {
         this.gameRepository = gameRepository;
     }
 
-    public QuestionDTO getSingleQuestionDTO(Optional<Difficulty> difficulty, Optional<Category> category) {
-        TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, category)[0];
+    public QuestionDTO getSingleQuestionDTO(Optional<Difficulty> difficulty, Optional<Category[]> categories) {
+        TriviaApiDAO questionFromApi = getQuestionsFromTriviaApi(LIMIT_NUMBER, difficulty, categories)[0];
         return provideQuestionWithAllAnswers(questionFromApi);
     }
 
-    public Question[] getMultipleQuestions(int length, Optional<Difficulty> difficulty, Optional<Category> category) {
-        TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, category);
+    public Question[] getMultipleQuestions(int length, Optional<Difficulty> difficulty, Optional<Category[]> categories) {
+        TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, categories);
         return Arrays.stream(questionsFromApi)
                 .map(questionDTO -> {
                             if (questionRepository.existsById(questionDTO.id())) return questionRepository.getById(questionDTO.id());
@@ -99,12 +99,17 @@ public class QuestionService {
         return answers.toArray(new String[4]);
     }
 
-    private TriviaApiDAO[] getQuestionsFromTriviaApi(int limit, Optional<Difficulty> difficulty, Optional<Category> category) {
+    private TriviaApiDAO[] getQuestionsFromTriviaApi(int limit, Optional<Difficulty> difficulty, Optional<Category[]> categories) {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("?limit=").append(limit);
         difficulty.ifPresent(value -> stringBuilder.append("&difficulty=").append(value.stringValue));
-        category.ifPresent(value -> stringBuilder.append("&categories=").append(value.stringValue));
+        categories.ifPresent(value -> {
+            stringBuilder.append("&categories=");
+            String[] categoriesAsString = Arrays.stream(value).map(value1 -> value1.stringValue).toArray(String[]::new);
+            stringBuilder.append(String.join(",", categoriesAsString));
+        });
+        System.out.println("Getting " + URL + stringBuilder);
 
         TriviaApiDAO[] questions = restTemplate.getForObject(URL + stringBuilder, TriviaApiDAO[].class);
         if (questions == null || questions.length != limit) {

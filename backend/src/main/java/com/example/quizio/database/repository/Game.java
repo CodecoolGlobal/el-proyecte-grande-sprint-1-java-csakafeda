@@ -20,7 +20,8 @@ public class Game {
     private Long id;
     @ManyToOne
     private Player creator;
-    private Category category;
+    @ElementCollection
+    private Set<Category> categories;
     private Difficulty difficulty;
     @OneToMany
     private List<Question> questions;

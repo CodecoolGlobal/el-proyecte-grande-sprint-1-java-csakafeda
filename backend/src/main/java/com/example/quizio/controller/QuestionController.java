@@ -27,7 +27,7 @@ public class QuestionController {
     @GetMapping("question")
     public QuestionDTO getQuestion(
             @RequestParam Optional<Difficulty> difficulty,
-            @RequestParam Optional<Category> category,
+            @RequestParam Optional<Category[]> categories,
             @RequestParam Optional<Long> gameId,
             @RequestParam Optional<Integer> index
     ) {
@@ -41,7 +41,7 @@ public class QuestionController {
             }
             return currentQuestion;
         }
-        return questionService.getSingleQuestionDTO(difficulty, category);
+        return questionService.getSingleQuestionDTO(difficulty, categories);
     }
 
 }
