@@ -58,4 +58,24 @@ public class GameService {
         }
         scoreRepository.save(Score.builder().game(game.get()).player(player.get()).score(score).build());
     }
+
+    public Set<Game> loadGameByPlayerNameOrIdOrEmail(
+            Long playerId,
+            String playerName,
+            String playerEmail) {
+        if (playerId == null && playerName.isEmpty() && playerEmail.isEmpty()) {
+            throw new BadRequestException(
+                    "Player id & name & email doesn't provided, you must provide one not empty field to get a game!"
+            );
+        }
+
+        if (playerId != null && playerRepository.existsById(playerId)) {
+            return gameRepository.findAllByCreatorId(playerId);
+        } else if (playerRepository.existsByName(playerName)) {
+            return gameRepository.findAllByCreatorName(playerName);
+        } else if (playerRepository.existsByEmail(playerEmail)) {
+            return gameRepository.findAllByCreatorEmail(playerEmail);
+        }
+        throw new BadRequestException("None provided field exists in database.");
+    }
 }

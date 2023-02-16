@@ -2,13 +2,16 @@ package com.example.quizio.controller;
 
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
+import com.example.quizio.database.repository.Game;
 import com.example.quizio.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 public class GameController {
@@ -34,5 +37,14 @@ public class GameController {
             @RequestParam Long playerId,
             @RequestParam Integer score) {
         gameService.saveGameScore(gameId, playerId, score);
+    }
+
+    @GetMapping("/loadgame")
+    public Set<Game> loadCreatedGames(
+            @RequestParam(required = false) Long playerId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email
+    ) {
+        return gameService.loadGameByPlayerNameOrIdOrEmail(playerId, name, email);
     }
 }
