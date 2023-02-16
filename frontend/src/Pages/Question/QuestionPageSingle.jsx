@@ -1,29 +1,39 @@
-import { Button, CircularProgress, Container, Grid } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import {Button, Container, Grid} from "@mui/material";
+import {useEffect, useRef, useState} from "react";
 import Loading from "../../Components/Loading";
 import Counter from "./Counter";
 import PointDisplay from "./PointDisplay";
 import "./QuestionPage.css"
+import {useSearchParams} from "react-router-dom";
 
-const URL = "/api/question";
-
-
-export default function QuestionPage() {
+export default function QuestionPageSingle() {
     const [question, setQuestion] = useState(null);
     const dataFetchedRef = useRef(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [loading, setLoading] = useState(true);
     const [isTimeOut, setIsTimeOut] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
-    
+
     const [points, setPoints] = useState(0);
     const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
-    
+
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
-    
+
     async function fetchQuestion() {
-        const response = await fetch(URL);
+        const category = searchParams.get("category");
+        const difficulty = searchParams.get("difficulty");
+
+        let url = `/api/question`;
+        if (category && difficulty) {
+            url = `/api/question?category=${category}&difficulty=${difficulty}`
+        } else if (category) {
+            url = `/api/question?category=${category}`
+        } else if (difficulty) {
+            url = `/api/question?difficulty=${difficulty}`
+        }
+        const response = await fetch(url);
         const data = await response.json();
         setQuestion(data);
         setLoading(false);
@@ -32,7 +42,7 @@ export default function QuestionPage() {
     useEffect(() => {
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
-        fetchQuestion()
+        fetchQuestion();
     }, [timeLeft, loading, correctAnswerIndex]);
 
     const submitAnswerAndGetCorrectIndex = async index => {
@@ -40,14 +50,13 @@ export default function QuestionPage() {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
-              },
+            },
             body: JSON.stringify({
                 questionId: question.id,
                 answerIndex: index
             })
         });
         const data = await resp.json();
-        console.log(data);
         return data;
     }
 
@@ -84,24 +93,30 @@ export default function QuestionPage() {
         <div>
 
             <Container maxWidth="md" sx={{minHeight: 250}}>
-                {isTimeOut ? <Container maxWidth="md" align="center"><h1>You weren't fast enough!</h1></Container> : loading ? <h1><Loading /></h1> : <>
-                    <h1 align="center">{question.question}</h1>
-                    <Grid
-                        container
-                        textAlign="center"
-                        spacing={3}
-                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                    >
-                        {question.answers.map((answer, index) => (
-                            <Grid key={index} item xs={6}>
-                                <Button variant="contained" className={correctAnswerIndex === index ? "correct" : null} sx={{ width: "100%" }} size="large" key={index} onClick={() => handleAnswerSubmit(index)}>{answer}</Button>
+                {isTimeOut ?
+                    <Container maxWidth="md" align="center"><h1>You weren't fast enough!</h1></Container> : loading ?
+                        <h1><Loading/></h1> : <>
+                            <h1 align="center">{question.question}</h1>
+                            <Grid
+                                container
+                                textAlign="center"
+                                spacing={3}
+                                columnSpacing={{xs: 1, sm: 2, md: 3}}
+                            >
+                                {question.answers.map((answer, index) => (
+                                    <Grid key={index} item xs={6}>
+                                        <Button variant="contained"
+                                                className={correctAnswerIndex === index ? "correct" : null}
+                                                sx={{width: "100%"}} size="large" key={index}
+                                                onClick={() => handleAnswerSubmit(index)}>{answer}</Button>
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
-                    </Grid>
-                </>}
+                        </>}
             </Container>
-            <Counter time={TIME_FOR_QUESTION} key={loading} onTick={handleTick} onComplete={handleTimeOut} isFinished={isFinished} />
-            <PointDisplay points={points} />
+            <Counter time={TIME_FOR_QUESTION} key={loading} onTick={handleTick} onComplete={handleTimeOut}
+                     isFinished={isFinished}/>
+            <PointDisplay points={points}/>
         </div>
     );
 }
