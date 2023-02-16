@@ -4,12 +4,12 @@ import Loading from "../../Components/Loading";
 import Counter from "./Counter";
 import PointDisplay from "./PointDisplay";
 import "./QuestionPage.css"
-import {useParams, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 
 export default function QuestionPageSingle() {
     const [question, setQuestion] = useState(null);
     const dataFetchedRef = useRef(false);
-    //const [searchParams, setSearchParams]= useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [loading, setLoading] = useState(true);
     const [isTimeOut, setIsTimeOut] = useState(false);
@@ -22,13 +22,24 @@ export default function QuestionPageSingle() {
     let timeLeft = TIME_FOR_QUESTION;
 
     async function fetchQuestion() {
+        console.log(searchParams.get("category"))
+        console.log(searchParams.get("difficulty"))
 
-        const response = await fetch("/api/question");
+        const category = searchParams.get("category");
+        const difficulty = searchParams.get("difficulty");
+
+        let url = `/api/question`;
+        if (category && difficulty) {
+            url = `/api/question?category=${category}&difficulty=${difficulty}`
+        } else if (category) {
+            url = `/api/question?category=${category}`
+        } else if (difficulty) {
+            url = `/api/question?difficulty=${difficulty}`
+        }
+        const response = await fetch(url);
         const data = await response.json();
         setQuestion(data);
         setLoading(false);
-        console.log(question);
-
     }
 
     useEffect(() => {
