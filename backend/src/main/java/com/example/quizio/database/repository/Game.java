@@ -1,9 +1,8 @@
 package com.example.quizio.database.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.quizio.database.enums.Category;
+import com.example.quizio.database.enums.Difficulty;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,14 +13,15 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne
     private Player creator;
-    private String category;
-    private String difficulty;
+    private Category category;
+    private Difficulty difficulty;
     @OneToMany
     private List<Question> questions;
     @OneToMany(mappedBy = "game")

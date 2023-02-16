@@ -1,8 +1,8 @@
 package com.example.quizio.database.enums;
 
 public enum Category {
-    ARTS("arts"),
-    MOVIES("movies"),
+    ARTS_AND_LITERATURE("arts"),
+    FILM_AND_TV("movies"),
     FOOD_AND_DRINK("food_and_drink"),
     GENERAL_KNOWLEDGE("general_knowledge"),
     GEOGRAPHY("geography"),

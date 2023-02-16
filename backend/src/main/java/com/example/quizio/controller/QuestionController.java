@@ -38,7 +38,7 @@ public class QuestionController {
             // handle get question from game repository
             return DUMMY_QUESTION;
         }
-        return questionService.getSingleQuestion(difficulty, category);
+        return questionService.getSingleQuestionDTO(difficulty, category);
     }
 
 }
