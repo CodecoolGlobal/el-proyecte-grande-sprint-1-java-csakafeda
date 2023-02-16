@@ -75,9 +75,17 @@ export default function HomePage() {
     }
 
     return <>
-        <Container align="center" sx={{padding: "5rem"}}>
-            <TextField sx={{width: '30rem'}} id="outlined-basic" label="Game search" variant="outlined"
-                       placeholder="Search game by game id, player name or email "/>
+        <Container align="center" sx={{padding: "2rem"}}>
+            <Button variant="contained"
+                    size="large"
+                    sx={{margin: "2rem", padding: "2rem"}}
+                    onClick={() => {
+                        navigate("search-multi/")
+                    }
+            }
+            >
+               Search existing games
+            </Button>
         </Container>
         <Container align="center" sx={{padding: "5rem"}}>
             <FormControl sx={{m: 1, minWidth: 300}}>
@@ -137,13 +145,14 @@ export default function HomePage() {
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} gameid={gameId} onClick={(e) => {
-                getCategoryAndDifficultySearchParam(e).then((r) => {
-                    setGameId(r);
-                    navigate("question-multi/");
-                });
-            }
-            }>
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} gameid={gameId}
+                    onClick={(e) => {
+                        getCategoryAndDifficultySearchParam(e).then((r) => {
+                            setGameId(r);
+                            navigate("question-multi/");
+                        });
+                    }
+                    }>
                 Multiplayer game
             </Button>
         </Container>
