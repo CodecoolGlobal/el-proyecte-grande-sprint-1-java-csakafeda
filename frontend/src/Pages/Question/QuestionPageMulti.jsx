@@ -21,26 +21,21 @@ export default function QuestionPageSingle() {
     const [gameId, setGameId] = useState(0);
     const [index, setIndex] = useState(0);
     const QUESTION_NUMBER = 10;
-    const PLAYER_ID = 26;
+    const PLAYER_ID = 26;2
 
     const TIME_FOR_QUESTION = 10000;
     let timeLeft = TIME_FOR_QUESTION;
 
-    async function fetchNextQuestion(id, index) {
+    async function fetchNextQuestion() {
         const baseUrl = "/api/question"
-        const res = await fetch(`${baseUrl}?gameId=${id}&index=${index}`);
-        const data = await res.json();
-        setQuestion(data);
-        setLoading(false);
+        const res = await fetch(`${baseUrl}?gameId=${gameId}&index=${index}`);
+        return res.json();
     }
 
     async function createNewGame() {
         const baseUrl = "/api/newgame";
         const res = await fetch(`${baseUrl}?createdBy=${PLAYER_ID}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            method: "POST"
         });
         return res.json();
     }
@@ -48,10 +43,7 @@ export default function QuestionPageSingle() {
     async function saveScore() {
         const baseUrl = "/api/playedgame";
         const res = await fetch(`${baseUrl}?gameId=${gameId}&playerId=${PLAYER_ID}&score=${points}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            method: "POST"
         });
         return res.statusText;
     }
@@ -65,17 +57,22 @@ export default function QuestionPageSingle() {
                 setNewGame(false);
                 setGameId(res);
                 })
-                .then(async () => {
-                    await fetchNextQuestion(gameId, index);
-                    setIndex(index + 1);
-                })
         }
         if (index < QUESTION_NUMBER) {
             fetchNextQuestion(index).then(() => setIndex(index + 1));
         } else {
             saveScore().then(() => setEndGame(true));
         }
-    }, [timeLeft, loading, correctAnswerIndex]);
+    }, [timeLeft, loading, correctAnswerIndex, question]);
+
+    useEffect(() => {
+        if (gameId !== 0) {
+            fetchNextQuestion().then(res => {
+                setQuestion(res);
+                setLoading(false);
+            })
+        }
+    }, [gameId, index])
 
     const submitAnswerAndGetCorrectIndex = async index => {
         const resp = await fetch("/api/answer", {
