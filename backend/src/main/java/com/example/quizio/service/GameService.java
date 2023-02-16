@@ -21,9 +21,9 @@ public class GameService {
     }
 
     public Long generateNewMultiGameAndReturnGameId(
+            Long createdBy,
             Optional<Difficulty> difficulty,
-            Optional<Category> category,
-            Optional<Long> createdBy
+            Optional<Category> category
     ) {
         return null;
     }

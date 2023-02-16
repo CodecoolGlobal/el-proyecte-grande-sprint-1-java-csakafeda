@@ -21,10 +21,10 @@ public class GameController {
 
     @PostMapping("newgame")
     public Long createNewMultiGame(
+            @RequestParam Long createdBy,
             @RequestParam Optional<Difficulty> difficulty,
-            @RequestParam Optional<Category> category,
-            @RequestParam Optional<Long> createdBy
+            @RequestParam Optional<Category> category
     ) {
-        return gameService.generateNewMultiGameAndReturnGameId(difficulty, category, createdBy);
+        return gameService.generateNewMultiGameAndReturnGameId(createdBy, difficulty, category);
     }
 }
