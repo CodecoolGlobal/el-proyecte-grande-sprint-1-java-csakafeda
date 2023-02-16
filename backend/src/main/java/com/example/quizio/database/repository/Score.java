@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class PlayerGame {
+public class Score {
     @EmbeddedId
     private PlayerGameId playerGameId;
     private Integer score;
