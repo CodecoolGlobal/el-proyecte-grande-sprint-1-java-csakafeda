@@ -22,9 +22,6 @@ export default function QuestionPageSingle() {
     let timeLeft = TIME_FOR_QUESTION;
 
     async function fetchQuestion() {
-        console.log(searchParams.get("category"))
-        console.log(searchParams.get("difficulty"))
-
         const category = searchParams.get("category");
         const difficulty = searchParams.get("difficulty");
 

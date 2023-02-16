@@ -40,10 +40,8 @@ export default function HomePage() {
     const [gameId, setGameId] = useState(0);
     const theme = useTheme();
     const [chosenCategory, setChosenCategory] = useState([]);
-    const [URL, setURL] = useState("");
 
     const categories = [
-        "all",
         "arts_and_literature",
         "food_and_drink",
         "general_knowledge",
@@ -58,26 +56,21 @@ export default function HomePage() {
     const handleCategoryChange = (event) => {
         const {target: {value}} = event;
         setChosenCategory(typeof value === 'string' ? value.split(',') : value);
-        console.log(value);
     };
 
     const handleDifficultyChange = (event) => {
-        console.log((event.target.value).toUpperCase());
-        setDifficulty((event.target.value));
+        setDifficulty(event.target.value);
     };
 
-    const getCategoryAndDifficultySearchParam = (e) => {
-        console.log(difficulty);
-        console.log(chosenCategory.length)
-
-        if ((difficulty !== "" && chosenCategory.length !== 0) || (difficulty !== "all" && chosenCategory[0] !== "all")) {
+    const getCategoryAndDifficultySearchParam = () => {
+        if (difficulty !== "" && chosenCategory.length !== 0) {
             return `?difficulty=${difficulty.toUpperCase()}&category=${chosenCategory[0].toUpperCase()}`;
-        } else if (chosenCategory.length > 0 || chosenCategory[0] === "all") {
+        } else if (chosenCategory.length > 0) {
             return `?category=${chosenCategory[0].toUpperCase()}`;
-        } else if (difficulty !== "" || difficulty !== "all") {
+        } else if (difficulty !== "") {
             return `?difficulty=${difficulty.toUpperCase()}`;
         } else {
-            return"";
+            return "";
         }
     }
 
@@ -93,7 +86,6 @@ export default function HomePage() {
                     value={difficulty}
                     onChange={handleDifficultyChange}
                 >
-                    <MenuItem value={"all"}>All</MenuItem>
                     <MenuItem value={"easy"}>Easy</MenuItem>
                     <MenuItem value={"medium"}>Medium</MenuItem>
                     <MenuItem value={"hard"}>Hard</MenuItem>
@@ -132,9 +124,7 @@ export default function HomePage() {
         </Container>
 
         <Container align="center" sx={{padding: "4rem"}}>
-            <Button variant="contained" size="large" onClick={(e) => {
-                setURL(getCategoryAndDifficultySearchParam(e));
-                console.log(getCategoryAndDifficultySearchParam());
+            <Button variant="contained" size="large" onClick={() => {
                 navigate({
                     pathname: "/question-single",
                     search: getCategoryAndDifficultySearchParam()
