@@ -22,17 +22,24 @@ export default function QuestionPageSingle() {
     let timeLeft = TIME_FOR_QUESTION;
 
     async function fetchQuestion() {
-        const category = searchParams.get("category");
+        const categories = searchParams.getAll("category");
         const difficulty = searchParams.get("difficulty");
-
         let url = `/api/question`;
-        if (category && difficulty) {
-            url = `/api/question?category=${category}&difficulty=${difficulty}`
-        } else if (category) {
-            url = `/api/question?category=${category}`
+
+        if (categories && difficulty) {
+            url += `?difficulty=${difficulty}`;
+            for (const category of categories) {
+                url += `&categories=${category}`;
+            }
+        } else if (categories) {
+            url += `?categories=${categories[0]}`
+            for (let i = 1; i < categories.length; i++) {
+                url += `&categories=${categories[i]}`;
+            }
         } else if (difficulty) {
             url = `/api/question?difficulty=${difficulty}`
         }
+
         const response = await fetch(url);
         const data = await response.json();
         setQuestion(data);

@@ -7,7 +7,7 @@ import {
     MenuItem,
     Select,
     OutlinedInput,
-    useTheme, TextField
+    useTheme
 } from "@mui/material";
 import {Container} from "@mui/system";
 import {useNavigate} from "react-router-dom";
@@ -64,9 +64,17 @@ export default function HomePage() {
 
     const getCategoryAndDifficultySearchParam = () => {
         if (difficulty !== "" && chosenCategory.length !== 0) {
-            return `?difficulty=${difficulty.toUpperCase()}&category=${chosenCategory[0].toUpperCase()}`;
+            let str = `?difficulty=${difficulty.toUpperCase()}`;
+            for (let category of chosenCategory) {
+                str += `&category=${category.toUpperCase()}`
+            }
+            return str;
         } else if (chosenCategory.length > 0) {
-            return `?category=${chosenCategory[0].toUpperCase()}`;
+            let str = `?category=${chosenCategory[0].toUpperCase()}`;
+            for (let i = 1; i < chosenCategory.length; i++) {
+                str += `&category=${chosenCategory[i].toUpperCase()}`
+            }
+            return str;
         } else if (difficulty !== "") {
             return `?difficulty=${difficulty.toUpperCase()}`;
         } else {
@@ -82,9 +90,9 @@ export default function HomePage() {
                     onClick={() => {
                         navigate("search-multi/")
                     }
-            }
+                    }
             >
-               Search existing games
+                Search existing games
             </Button>
         </Container>
         <Container align="center" sx={{padding: "5rem"}}>
