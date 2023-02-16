@@ -77,10 +77,10 @@ export default function HomePage() {
     return <>
         <Container align="center" sx={{padding: "5rem"}}>
             <TextField sx={{width: '30rem'}} id="outlined-basic" label="Game search" variant="outlined"
-                       placeholder="Search game by gameid, playername or email "/>
+                       placeholder="Search game by game id, player name or email "/>
         </Container>
         <Container align="center" sx={{padding: "5rem"}}>
-            <FormControl sx={{m: 1, minWidth: 200}}>
+            <FormControl sx={{m: 1, minWidth: 300}}>
                 <InputLabel id="difficulty-choosing">
                     Difficulty
                 </InputLabel>
@@ -128,7 +128,7 @@ export default function HomePage() {
         </Container>
 
         <Container align="center" sx={{padding: "4rem"}}>
-            <Button variant="contained" size="large" onClick={() => {
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} onClick={() => {
                 navigate({
                     pathname: "/question-single",
                     search: getCategoryAndDifficultySearchParam()
@@ -137,7 +137,7 @@ export default function HomePage() {
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" gameid={gameId} onClick={(e) => {
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} gameid={gameId} onClick={(e) => {
                 getCategoryAndDifficultySearchParam(e).then((r) => {
                     setGameId(r);
                     navigate("question-multi/");
