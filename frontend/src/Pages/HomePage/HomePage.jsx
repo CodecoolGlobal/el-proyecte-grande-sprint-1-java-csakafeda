@@ -7,7 +7,7 @@ import {
     MenuItem,
     Select,
     OutlinedInput,
-    useTheme
+    useTheme, TextField
 } from "@mui/material";
 import {Container} from "@mui/system";
 import {useNavigate} from "react-router-dom";
@@ -75,8 +75,20 @@ export default function HomePage() {
     }
 
     return <>
+        <Container align="center" sx={{padding: "2rem"}}>
+            <Button variant="contained"
+                    size="large"
+                    sx={{margin: "2rem", padding: "2rem"}}
+                    onClick={() => {
+                        navigate("search-multi/")
+                    }
+            }
+            >
+               Search existing games
+            </Button>
+        </Container>
         <Container align="center" sx={{padding: "5rem"}}>
-            <FormControl sx={{m: 1, minWidth: 200}}>
+            <FormControl sx={{m: 1, minWidth: 300}}>
                 <InputLabel id="difficulty-choosing">
                     Difficulty
                 </InputLabel>
@@ -124,7 +136,7 @@ export default function HomePage() {
         </Container>
 
         <Container align="center" sx={{padding: "4rem"}}>
-            <Button variant="contained" size="large" onClick={() => {
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} onClick={() => {
                 navigate({
                     pathname: "/question-single",
                     search: getCategoryAndDifficultySearchParam()
@@ -133,13 +145,14 @@ export default function HomePage() {
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" gameid={gameId} onClick={(e) => {
-                getCategoryAndDifficultySearchParam(e).then((r) => {
-                    setGameId(r);
-                    navigate("question-multi/");
-                });
-            }
-            }>
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} gameid={gameId}
+                    onClick={(e) => {
+                        getCategoryAndDifficultySearchParam(e).then((r) => {
+                            setGameId(r);
+                            navigate("question-multi/");
+                        });
+                    }
+                    }>
                 Multiplayer game
             </Button>
         </Container>
