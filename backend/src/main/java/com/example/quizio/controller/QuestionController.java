@@ -1,6 +1,7 @@
 package com.example.quizio.controller;
 
 import com.example.quizio.controller.dto.QuestionDTO;
+import com.example.quizio.controller.exception.BadRequestException;
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
 import com.example.quizio.service.QuestionService;
@@ -30,7 +31,10 @@ public class QuestionController {
             @RequestParam Optional<Long> gameId,
             @RequestParam Optional<Integer> index
     ) {
-        if (gameId.isPresent() && index.isPresent()) {
+        if ((gameId.isPresent() && index.isEmpty()) || (gameId.isEmpty() && index.isPresent())) {
+            throw new BadRequestException("Can't provide only gameId or index. If you provide one, you have to provide the other as well.");
+        }
+        if (gameId.isPresent()) {
             // handle get question from game repository
             return DUMMY_QUESTION;
         }
