@@ -13,7 +13,6 @@ import {Container} from "@mui/system";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -53,6 +52,9 @@ export default function HomePage() {
         "society_and_culture",
         "sport_and_leisure"
     ];
+    const categoryToWriteOut =
+        categories.map(category => category.charAt(0).toUpperCase()
+            + category.slice(1).replace(/_/g, " "));
     const handleCategoryChange = (event) => {
         const {target: {value}} = event;
         setChosenCategory(typeof value === 'string' ? value.split(',') : value);
@@ -64,9 +66,17 @@ export default function HomePage() {
 
     const getCategoryAndDifficultySearchParam = () => {
         if (difficulty !== "" && chosenCategory.length !== 0) {
-            return `?difficulty=${difficulty.toUpperCase()}&category=${chosenCategory[0].toUpperCase()}`;
-        } else if (chosenCategory.length > 0) {
-            return `?category=${chosenCategory[0].toUpperCase()}`;
+            let str = `?difficulty=${difficulty.toUpperCase()}`;
+            for (let category of chosenCategory) {
+                str += `&category=${category.toUpperCase().replace(/ /g, "_")}`
+            }
+            return str;
+        } else if (chosenCategory.length !== 0) {
+            let str = `?category=${chosenCategory[0].toUpperCase().replace(/ /g, "_")}`;
+            for (let i = 1; i < chosenCategory.length; i++) {
+                str += `&category=${chosenCategory[i].toUpperCase().replace(/ /g, "_")}`
+            }
+            return str;
         } else if (difficulty !== "") {
             return `?difficulty=${difficulty.toUpperCase()}`;
         } else {
@@ -75,8 +85,20 @@ export default function HomePage() {
     }
 
     return <>
+        <Container align="center" sx={{padding: "2rem"}}>
+            <Button variant="contained"
+                    size="large"
+                    sx={{margin: "2rem", padding: "2rem"}}
+                    onClick={() => {
+                        navigate("search-multi/")
+                    }
+                    }
+            >
+                Search existing games
+            </Button>
+        </Container>
         <Container align="center" sx={{padding: "5rem"}}>
-            <FormControl sx={{m: 1, minWidth: 200}}>
+            <FormControl sx={{m: 1, minWidth: 300}}>
                 <InputLabel id="difficulty-choosing">
                     Difficulty
                 </InputLabel>
@@ -110,11 +132,11 @@ export default function HomePage() {
                     )}
                     MenuProps={MenuProps}
                 >
-                    {categories.map((name) => (
+                    {categoryToWriteOut.map((name) => (
                         <MenuItem
                             key={name}
                             value={name}
-                            style={getStyles(name, chosenCategory, theme)}
+                            style={getStyles(name, categoryToWriteOut, theme)}
                         >
                             {name}
                         </MenuItem>
@@ -124,7 +146,7 @@ export default function HomePage() {
         </Container>
 
         <Container align="center" sx={{padding: "4rem"}}>
-            <Button variant="contained" size="large" onClick={() => {
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} onClick={() => {
                 navigate({
                     pathname: "/question-single",
                     search: getCategoryAndDifficultySearchParam()
@@ -133,10 +155,14 @@ export default function HomePage() {
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" gameid={gameId} onClick={() => {
-                navigate("/question-multi");
-            }
-            }>
+            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} gameid={gameId}
+                    onClick={(e) => {
+                        getCategoryAndDifficultySearchParam(e).then((r) => {
+                            setGameId(r);
+                            navigate("question-multi/");
+                        });
+                    }
+                    }>
                 Multiplayer game
             </Button>
         </Container>
