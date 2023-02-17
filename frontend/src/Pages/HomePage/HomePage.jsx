@@ -67,19 +67,39 @@ export default function HomePage() {
 
     const getCategoryAndDifficultySearchParam = () => {
         if (difficulty !== "" && chosenCategory.length !== 0) {
-            let str = `?difficulty=${difficulty.toUpperCase()}`;
+            let str = `difficulty=${difficulty.toUpperCase()}`;
             for (let category of chosenCategory) {
                 str += `&category=${category.toUpperCase().replace(/ /g, "_")}`
             }
             return str;
         } else if (chosenCategory.length !== 0) {
-            let str = `?category=${chosenCategory[0].toUpperCase().replace(/ /g, "_")}`;
+            let str = `category=${chosenCategory[0].toUpperCase().replace(/ /g, "_")}`;
             for (let i = 1; i < chosenCategory.length; i++) {
                 str += `&category=${chosenCategory[i].toUpperCase().replace(/ /g, "_")}`
             }
             return str;
         } else if (difficulty !== "") {
-            return `?difficulty=${difficulty.toUpperCase()}`;
+            return `difficulty=${difficulty.toUpperCase()}`;
+        } else {
+            return "";
+        }
+    }
+
+    const getCategoryAndDifficultySearchParamForMulti = () => {
+        if (difficulty !== "" && chosenCategory.length !== 0) {
+            let str = `difficulty=${difficulty.toUpperCase()}`;
+            for (let category of chosenCategory) {
+                str += `&categories=${category.toUpperCase().replace(/ /g, "_")}`
+            }
+            return str;
+        } else if (chosenCategory.length !== 0) {
+            let str = `categories=${chosenCategory[0].toUpperCase().replace(/ /g, "_")}`;
+            for (let i = 1; i < chosenCategory.length; i++) {
+                str += `&categories=${chosenCategory[i].toUpperCase().replace(/ /g, "_")}`
+            }
+            return str;
+        } else if (difficulty !== "") {
+            return `difficulty=${difficulty.toUpperCase()}`;
         } else {
             return "";
         }
@@ -87,6 +107,7 @@ export default function HomePage() {
 
     async function createNewGame(urlParams) {
         const baseUrl = "/api/newgame";
+        console.log(urlParams)
         const res = await fetch(`${baseUrl}?createdBy=${getPlayerId()}&${urlParams}`, {
             method: "POST"
         });
@@ -168,7 +189,7 @@ export default function HomePage() {
                 onClick={async () => {
                     if (!isUserSignedIn()) alert("You need to be signed in to access this feature.")
                     else {
-                        const searchParams = getCategoryAndDifficultySearchParam();
+                        const searchParams = getCategoryAndDifficultySearchParamForMulti();
                         const gameId = await createNewGame(searchParams);
                         navigate("/question-multi/" + gameId);
                     }
