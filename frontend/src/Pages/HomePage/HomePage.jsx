@@ -159,7 +159,7 @@ export default function HomePage() {
                 onClick={(e) => {
                     getCategoryAndDifficultySearchParam(e).then((r) => {
                         setGameId(r);
-                        navigate("question-multi/");
+                        navigate("/question-multi");
                     });
                 }
                 }>
