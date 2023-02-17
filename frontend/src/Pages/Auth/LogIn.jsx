@@ -40,6 +40,7 @@ export default function LogIn() {
             if (res.status === 200) {
                 res.json().then(data => {
                     setPlayerId(data);
+                    navigate("/")
                 })
             }
         })
