@@ -20,7 +20,7 @@ function App() {
                         <Route element={<Layout/>}>
                             <Route path='/' element={<HomePage/>}/>
                             <Route path='/question-single' element={<QuestionPageSingle/>}/>
-                            <Route path='/question-multi' element={<QuestionPageMulti/>}/>
+                            <Route path='/question-multi/:gameId' element={<QuestionPageMulti/>}/>
                             <Route path='/search-multi' element={<SearchMultiGamePage/>}/>
                         </Route>
 
