@@ -16,8 +16,12 @@ export default function LogIn() {
             return prev;
         }, {});
         console.log(formObject);
+        if (formObject.username === "" || formObject.password === "") {
+            setErrorMessage("You have to provide a username and a password.")
+            return;
+        }
         fetch("/api/player-id", {
-            method: "CONNECT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -27,7 +31,9 @@ export default function LogIn() {
                 "password": formObject?.password
               })
         }).then(res => {
-            console.log(res.status);
+            if (res.status === 203) {
+                setErrorMessage("Password is incorrect.")
+            }
         })
     }
 
@@ -41,6 +47,7 @@ export default function LogIn() {
                 <Button variant={"contained"} color={"primary"} sx={{flexGrow: 1}} type="submit">Submit</Button>
                 <Button variant={"contained"} color={"secondary"} onClick={() => navigate("/signup")}>Sign up instead</Button>
             </Stack>
+            <Typography variant={"body1"} align="center">{errorMessage}</Typography>
         </Stack>
 
         </Box>
