@@ -33,11 +33,11 @@ export default function Layout() {
                     </>
                     :
                     <>
-                        <Button href="#" variant="outlined" sx={{my: 1, mx: 1.5}} onClick={() => navigate("/")}>
+                        <Button variant="outlined" sx={{my: 1, mx: 1.5}} onClick={() => navigate("/login")}>
                             Login
                         </Button>
-                        <Button href="#" color="secondary" variant="outlined" sx={{my: 1, mx: 1.5}}
-                                onClick={() => navigate("/")}>
+                        <Button color="secondary" variant="outlined" sx={{my: 1, mx: 1.5}}
+                                onClick={() => navigate("/signup")}>
                             Sign up
                         </Button>
                     </>
