@@ -17,7 +17,7 @@ public class PlayerController {
         return playerService.createPlayer(player);
     }
 
-    @GetMapping("/player-id")
+    @PatchMapping("/player-id")
     public Long getPlayerIdFromPlayerEntity(@RequestBody Player player) {
         return playerService.getIdFromPlayer(player);
     }
