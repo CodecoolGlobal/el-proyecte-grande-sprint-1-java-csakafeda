@@ -4,10 +4,12 @@ import {
 } from "@mui/material";
 import {Container} from "@mui/system";
 import {useState} from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchMultiGamePage() {
     const [search, setSearch] = useState("");
     const [games, setGames] = useState(null);
+    const navigate = useNavigate();
 
     const fetchGames = async () => {
         const res = await fetch(`/api/loadgame?name=${search}`)
@@ -72,7 +74,9 @@ export default function SearchMultiGamePage() {
                                         <Button variant="contained"
                                                 align="right"
                                                 size="small"
-                                                sx={{margin: "0.5rem", padding: "0.5rem"}}>
+                                                sx={{margin: "0.5rem", padding: "0.5rem"}}
+                                                onClick={() => navigate("/question-multi/" + game.id)}
+                                                >
                                             Start this game!
                                         </Button>
                                     </TableRow>
