@@ -12,7 +12,7 @@ import {
 import { Container } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { getPlayerId } from "../../Tools/userTools";
+import { getPlayerId, isUserSignedIn } from "../../Tools/userTools";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -166,9 +166,12 @@ export default function HomePage() {
             </Button>
             <Button variant="contained" size="large" sx={{ margin: "4rem", padding: "2rem" }} gameid={gameId}
                 onClick={async () => {
-                    const searchParams = getCategoryAndDifficultySearchParam();
-                    const gameId = await createNewGame(searchParams);
-                    navigate("/question-multi/" + gameId);
+                    if (!isUserSignedIn()) alert("You need to be signed in to access this feature.")
+                    else {
+                        const searchParams = getCategoryAndDifficultySearchParam();
+                        const gameId = await createNewGame(searchParams);
+                        navigate("/question-multi/" + gameId);
+                    }
                 }
                 }>
                 Multiplayer game

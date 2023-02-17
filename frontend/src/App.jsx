@@ -7,6 +7,8 @@ import {themeOptions} from './Theme'
 import QuestionPageSingle from './Pages/Question/QuestionPageSingle.jsx';
 import QuestionPageMulti from './Pages/Question/QuestionPageMulti.jsx';
 import SearchMultiGamePage from "./Pages/SearchMultiGamePage.jsx";
+import LogIn from './Pages/Auth/LogIn';
+import SignUp from './Pages/Auth/SignUp';
 
 function App() {
     const theme = createTheme(themeOptions);
@@ -22,6 +24,8 @@ function App() {
                             <Route path='/question-single' element={<QuestionPageSingle/>}/>
                             <Route path='/question-multi/:gameId' element={<QuestionPageMulti/>}/>
                             <Route path='/search-multi' element={<SearchMultiGamePage/>}/>
+                            <Route path='/login' element={<LogIn/>}/>
+                            <Route path='/signup' element={<SignUp/>}/>
                         </Route>
 
                     </Routes>
