@@ -1,6 +1,7 @@
 import { Box, Button, Container, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { setPlayerId } from "../../Tools/userTools";
 
 export default function LogIn() {
     const navigate = useNavigate();
@@ -15,7 +16,6 @@ export default function LogIn() {
             prev[key] = value;
             return prev;
         }, {});
-        console.log(formObject);
         if (formObject.username === "" || formObject.password === "") {
             setErrorMessage("You have to provide a username and a password.")
             return;
@@ -33,6 +33,14 @@ export default function LogIn() {
         }).then(res => {
             if (res.status === 203) {
                 setErrorMessage("Password is incorrect.")
+            }
+            if (res.status === 404) {
+                setErrorMessage("Username not found.")
+            }
+            if (res.status === 200) {
+                res.json().then(data => {
+                    setPlayerId(data);
+                })
             }
         })
     }
