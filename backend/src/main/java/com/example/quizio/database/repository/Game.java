@@ -27,6 +27,6 @@ public class Game {
     private Difficulty difficulty;
     @OneToMany
     private List<Question> questions;
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private Set<Score> players;
 }

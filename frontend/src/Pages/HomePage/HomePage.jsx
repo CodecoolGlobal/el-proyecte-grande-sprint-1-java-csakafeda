@@ -9,9 +9,10 @@ import {
     OutlinedInput,
     useTheme
 } from "@mui/material";
-import {Container} from "@mui/system";
-import {useNavigate} from "react-router-dom";
-import {useState} from "react";
+import { Container } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { getPlayerId } from "../../Tools/userTools";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -56,7 +57,7 @@ export default function HomePage() {
         categories.map(category => category.charAt(0).toUpperCase()
             + category.slice(1).replace(/_/g, " "));
     const handleCategoryChange = (event) => {
-        const {target: {value}} = event;
+        const { target: { value } } = event;
         setChosenCategory(typeof value === 'string' ? value.split(',') : value);
     };
 
@@ -84,21 +85,29 @@ export default function HomePage() {
         }
     }
 
+    async function createNewGame(urlParams) {
+        const baseUrl = "/api/newgame";
+        const res = await fetch(`${baseUrl}?createdBy=${getPlayerId()}&${urlParams}`, {
+            method: "POST"
+        });
+        return await res.json();
+    }
+
     return <>
-        <Container align="center" sx={{padding: "2rem"}}>
+        <Container align="center" sx={{ padding: "2rem" }}>
             <Button variant="contained"
-                    size="large"
-                    sx={{margin: "2rem", padding: "2rem"}}
-                    onClick={() => {
-                        navigate("search-multi/")
-                    }
-                    }
+                size="large"
+                sx={{ margin: "2rem", padding: "2rem" }}
+                onClick={() => {
+                    navigate("search-multi/")
+                }
+                }
             >
                 Search existing games
             </Button>
         </Container>
-        <Container align="center" sx={{padding: "5rem"}}>
-            <FormControl sx={{m: 1, minWidth: 300}}>
+        <Container align="center" sx={{ padding: "5rem" }}>
+            <FormControl sx={{ m: 1, minWidth: 300 }}>
                 <InputLabel id="difficulty-choosing">
                     Difficulty
                 </InputLabel>
@@ -114,7 +123,7 @@ export default function HomePage() {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{m: 1, width: 300}}>
+            <FormControl sx={{ m: 1, width: 300 }}>
                 <InputLabel id="categories">Categories</InputLabel>
                 <Select
                     labelId="categories"
@@ -122,11 +131,11 @@ export default function HomePage() {
                     multiple
                     value={chosenCategory}
                     onChange={handleCategoryChange}
-                    input={<OutlinedInput id="select-multiple-category" label="categories"/>}
+                    input={<OutlinedInput id="select-multiple-category" label="categories" />}
                     renderValue={(selected) => (
-                        <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                             {selected.map((value) => (
-                                <Chip key={value} label={value}/>
+                                <Chip key={value} label={value} />
                             ))}
                         </Box>
                     )}
@@ -145,8 +154,8 @@ export default function HomePage() {
             </FormControl>
         </Container>
 
-        <Container align="center" sx={{padding: "4rem"}}>
-            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} onClick={() => {
+        <Container align="center" sx={{ padding: "4rem" }}>
+            <Button variant="contained" size="large" sx={{ margin: "4rem", padding: "2rem" }} onClick={() => {
                 navigate({
                     pathname: "/question-single",
                     search: getCategoryAndDifficultySearchParam()
@@ -155,14 +164,13 @@ export default function HomePage() {
             }>
                 Single player game
             </Button>
-            <Button variant="contained" size="large" sx={{margin: "4rem", padding: "2rem"}} gameid={gameId}
-                    onClick={(e) => {
-                        getCategoryAndDifficultySearchParam(e).then((r) => {
-                            setGameId(r);
-                            navigate("question-multi/");
-                        });
-                    }
-                    }>
+            <Button variant="contained" size="large" sx={{ margin: "4rem", padding: "2rem" }} gameid={gameId}
+                onClick={async () => {
+                    const searchParams = getCategoryAndDifficultySearchParam();
+                    const gameId = await createNewGame(searchParams);
+                    navigate("/question-multi/" + gameId);
+                }
+                }>
                 Multiplayer game
             </Button>
         </Container>

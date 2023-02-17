@@ -18,7 +18,7 @@ public class Player {
     private String name;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "player")
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
     private Set<Score> playedGames;
     @OneToMany(mappedBy = "creator")
     private Set<Game> createdGames;
