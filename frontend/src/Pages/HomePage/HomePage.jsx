@@ -12,6 +12,7 @@ import {
 import { Container } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { getPlayerId } from "../../Tools/userTools";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -82,6 +83,14 @@ export default function HomePage() {
         } else {
             return "";
         }
+    }
+
+    async function createNewGame(urlParams) {
+        const baseUrl = "/api/newgame";
+        const res = await fetch(`${baseUrl}?createdBy=${getPlayerId()}&${urlParams}`, {
+            method: "POST"
+        });
+        return await res.json();
     }
 
     return <>
@@ -156,11 +165,10 @@ export default function HomePage() {
                 Single player game
             </Button>
             <Button variant="contained" size="large" sx={{ margin: "4rem", padding: "2rem" }} gameid={gameId}
-                onClick={(e) => {
-                    getCategoryAndDifficultySearchParam(e).then((r) => {
-                        setGameId(r);
-                        navigate("/question-multi");
-                    });
+                onClick={async () => {
+                    const searchParams = getCategoryAndDifficultySearchParam();
+                    const gameId = await createNewGame(searchParams);
+                    navigate("/question-multi/" + gameId);
                 }
                 }>
                 Multiplayer game
