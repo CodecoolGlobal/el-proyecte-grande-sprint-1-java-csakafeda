@@ -2,9 +2,7 @@ package com.example.quizio.controller;
 
 import com.example.quizio.database.repository.Player;
 import com.example.quizio.service.PlayerService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class PlayerController {
@@ -17,5 +15,10 @@ public class PlayerController {
     @PostMapping("/player")
     public Player saveNewPlayer(@RequestBody Player player) {
         return playerService.createPlayer(player);
+    }
+
+    @GetMapping("/player-id")
+    public Long getPlayerIdFromPlayerEntity(@RequestBody Player player) {
+        return playerService.getIdFromPlayer(player);
     }
 }
