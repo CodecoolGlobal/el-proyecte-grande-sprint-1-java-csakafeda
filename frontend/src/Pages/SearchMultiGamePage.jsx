@@ -32,7 +32,6 @@ export default function SearchMultiGamePage() {
 
     const handleSearchTyping = (e) => {
         setSearch(e.target.value);
-        console.log(search);
     }
 
     return <>
