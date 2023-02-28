@@ -1,5 +1,7 @@
 package com.example.quizio.security;
 
+import com.example.quizio.security.filter.AuthenticationFilter;
+import com.example.quizio.security.filter.AuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -40,11 +43,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                // TODO antMatchers
+                .antMatchers("/player-id").permitAll()
                 .anyRequest()
                 .authenticated();
 
-        //TODO addFilters
+        http
+                .addFilter(new AuthenticationFilter(authenticationManagerBean()))
+                .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
