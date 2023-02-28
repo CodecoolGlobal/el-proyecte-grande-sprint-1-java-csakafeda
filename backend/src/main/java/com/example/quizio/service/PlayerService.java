@@ -7,6 +7,8 @@ import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.database.repository.Player;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+
 @Service
 public class PlayerService {
     private final PlayerRepository playerRepository;
@@ -16,6 +18,11 @@ public class PlayerService {
     }
 
     public Player createPlayer(Player player) {
+        if (playerRepository.existsByName(player.getName())) {
+            throw new EntityExistsException("Sorry but this username is used by someone else!");
+        } else if (playerRepository.existsByEmail(player.getEmail())) {
+            throw new EntityExistsException("Sorry but this e-mail address is already registered!");
+        }
         return playerRepository.save(player);
     }
 
