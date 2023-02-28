@@ -1,5 +1,6 @@
 package com.example.quizio.service;
 
+import com.example.quizio.controller.exception.BadRequestException;
 import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
@@ -31,5 +32,22 @@ public class PlayerService {
         }
 
         return fullPlayerEntity.getId();
+    }
+
+    public Player loadPlayerByPlayerNameOrIdOrEmail(Long playerId, String name, String email) {
+        if (playerId == null && name == null && email == null) {
+            throw new BadRequestException(
+                    "Player id & name & email doesn't provided, you must provide one not empty field to get a player!"
+            );
+        }
+
+        if (playerId != null && playerRepository.existsById(playerId)) {
+            return playerRepository.getPlayerById(playerId);
+        } else if (playerRepository.existsByName(name)) {
+            return playerRepository.getPlayerByName(name);
+        } else if (playerRepository.existsByEmail(email)) {
+            return playerRepository.getPlayerByEmail(email);
+        }
+        throw new BadRequestException("None provided field exists in database.");
     }
 }
