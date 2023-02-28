@@ -11,4 +11,8 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     Player getPlayerByName(String name);
 
+    Player getPlayerById(Long id);
+
+    Player getPlayerByEmail(String email);
+
 }

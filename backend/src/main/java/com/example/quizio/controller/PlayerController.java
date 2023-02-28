@@ -21,4 +21,12 @@ public class PlayerController {
     public Long getPlayerIdFromPlayerEntity(@RequestBody Player player) {
         return playerService.getIdFromPlayer(player);
     }
+
+    @GetMapping("/player")
+    public Player getPlayerByIdOrNameOrEmail(
+            @RequestParam(required = false) Long playerId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email) {
+        return playerService.loadPlayerByPlayerNameOrIdOrEmail(playerId, name, email);
+    }
 }
