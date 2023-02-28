@@ -45,7 +45,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authResult)
             throws IOException, ServletException {
         User player = (User) authResult.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256(player.getUsername());
+        Algorithm algorithm = Algorithm.HMAC256("QU1510");
         List<String> authorityList = player.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
