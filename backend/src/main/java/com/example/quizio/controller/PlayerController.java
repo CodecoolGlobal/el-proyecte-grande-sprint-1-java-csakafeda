@@ -22,8 +22,6 @@ public class PlayerController {
         return playerService.getIdFromPlayer(player);
     }
 
-    //TODO /login endpoint
-
     @GetMapping("/player")
     public Player getPlayerByIdOrNameOrEmail(
             @RequestParam(required = false) Long playerId,

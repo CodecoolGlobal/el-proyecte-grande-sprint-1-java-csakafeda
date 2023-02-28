@@ -35,7 +35,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String playerName = request.getParameter("name");
         String password = request.getParameter("password");
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(playerName, password);
-        return authenticationManager.authenticate(token);
+        Authentication authenticate = authenticationManager.authenticate(token);
+        return authenticate;
     }
 
     @Override
