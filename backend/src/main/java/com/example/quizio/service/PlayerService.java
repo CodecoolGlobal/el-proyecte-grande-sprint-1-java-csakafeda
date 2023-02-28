@@ -4,9 +4,13 @@ import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.database.repository.Player;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PlayerService implements UserDetailsService {
@@ -36,8 +40,13 @@ public class PlayerService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        Player player = playerRepository.getPlayerByName(name);
+        if (player == null) {
+            throw new UsernameNotFoundException(name);
+        }
+        List<SimpleGrantedAuthority> roles = new ArrayList<>();
         return null;
-        //TODO
+        //TODO role-management and return new user
     }
 }
