@@ -6,11 +6,11 @@ import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.database.repository.Player;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,9 +46,8 @@ public class PlayerService implements UserDetailsService {
         if (player == null) {
             throw new UsernameNotFoundException(name);
         }
-        List<SimpleGrantedAuthority> roles = new ArrayList<>();
-        return null;
-        //TODO role-management and return new user
+        List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(player.getRole().name()));
+        return new User(player.getName(), player.getPassword(), roles);
     }
 
     public Player loadPlayerByPlayerNameOrIdOrEmail(Long playerId, String name, String email) {
