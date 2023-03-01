@@ -49,7 +49,9 @@ export default function Layout() {
         position="static"
         color="default"
         elevation={0}
-        sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
+        sx={{
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
       >
         <Toolbar sx={{ flexWrap: "wrap" }}>
           <Typography
@@ -57,9 +59,9 @@ export default function Layout() {
             color="inherit"
             noWrap
             sx={{
-              flexGrow: 1,
               cursor: "pointer",
               userSelect: "none",
+              flexGrow: 1,
             }}
             onClick={() => navigate("/")}
           >
@@ -72,14 +74,14 @@ export default function Layout() {
                 variant="h4"
                 color="inherit"
                 noWrap
-                sx={{ userSelect: "none", textAlign: "center", flexGrow: 5 }}
+                sx={{ userSelect: "none", flexGrow: 1 }}
               >
                 {randomGreeting()} {playerName}!
               </Typography>
               <nav>
                 <Button
                   variant="outlined"
-                  sx={{ my: 1, mx: 1.5 }}
+                  sx={{ mx: 1.5, flexGrow: 0.5 }}
                   onClick={() => {
                     navigate("/profile");
                   }}
@@ -90,7 +92,7 @@ export default function Layout() {
               <nav>
                 <Button
                   variant="outlined"
-                  sx={{ my: 1, mx: 1.5 }}
+                  sx={{ mx: 1.5, flexGrow: 0.5 }}
                   onClick={() => {
                     signUserOut();
                     navigate("/login");
@@ -106,14 +108,14 @@ export default function Layout() {
                 variant="h4"
                 color="inherit"
                 noWrap
-                sx={{ userSelect: "none", textAlign: "center", flexGrow: 1 }}
+                sx={{ userSelect: "none", flexGrow: 1 }}
               >
                 {randomGreeting()} {playerName}!
               </Typography>
               <nav>
                 <Button
                   variant="outlined"
-                  sx={{ my: 1, mx: 1.5 }}
+                  sx={{ mx: 1.5, flexGrow: 1 }}
                   onClick={() => {
                     signUserOut();
                     navigate("/login");
@@ -127,7 +129,7 @@ export default function Layout() {
             <>
               <Button
                 variant="outlined"
-                sx={{ my: 1, mx: 1.5 }}
+                sx={{ mx: 1.5 }}
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -135,7 +137,7 @@ export default function Layout() {
               <Button
                 color="secondary"
                 variant="outlined"
-                sx={{ my: 1, mx: 1.5 }}
+                sx={{ my: 1 }}
                 onClick={() => navigate("/signup")}
               >
                 Sign up
