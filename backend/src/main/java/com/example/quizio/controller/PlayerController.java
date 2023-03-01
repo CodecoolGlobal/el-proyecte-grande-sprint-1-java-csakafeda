@@ -22,6 +22,11 @@ public class PlayerController {
         return playerService.getIdFromPlayer(player);
     }
 
+    @PostMapping("/player/login")
+    public String loginPlayer() {
+        return "OK";
+    }
+
     @GetMapping("/player")
     public Player getPlayerByIdOrNameOrEmail(
             @RequestParam(required = false) Long playerId,
