@@ -1,7 +1,7 @@
 import { Box, Button, Container, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { setPlayerId } from "../../Tools/userTools";
+import {setPlayerId, setToken} from "../../Tools/userTools";
 
 export default function LogIn() {
     const navigate = useNavigate();
@@ -20,14 +20,14 @@ export default function LogIn() {
             setErrorMessage("You have to provide a username and a password.")
             return;
         }
-        fetch("/api/player-id", {
-            method: "PATCH",
+        fetch("/api/player/login", {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 "name": formObject?.username,
-                "email": "",
                 "password": formObject?.password
               })
         }).then(res => {
@@ -38,8 +38,9 @@ export default function LogIn() {
                 setErrorMessage("Username not found.")
             }
             if (res.status === 200) {
-                res.json().then(data => {
-                    setPlayerId(data);
+                res.text().then(data => {
+                    //setPlayerId(data);
+                    setToken(data);
                     navigate("/")
                 })
             }
