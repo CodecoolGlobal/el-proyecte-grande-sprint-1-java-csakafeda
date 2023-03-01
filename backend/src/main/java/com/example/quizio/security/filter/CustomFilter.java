@@ -71,6 +71,7 @@ public class CustomFilter extends OncePerRequestFilter {
 
         Cookie cookie = new Cookie("token", token);
         cookie.setSecure(true);
+        cookie.setHttpOnly(false);
 
         response.addCookie(cookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

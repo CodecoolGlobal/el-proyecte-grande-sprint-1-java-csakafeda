@@ -4,6 +4,9 @@ import com.example.quizio.database.repository.Player;
 import com.example.quizio.service.PlayerService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class PlayerController {
     private final PlayerService playerService;
@@ -17,14 +20,22 @@ public class PlayerController {
         return playerService.createPlayer(player);
     }
 
-    @PatchMapping("/player-id")
-    public Long getPlayerIdFromPlayerEntity(@RequestBody Player player) {
-        return playerService.getIdFromPlayer(player);
-    }
-
     @PostMapping("/player/login")
-    public String loginPlayer() {
-        return "OK";
+    public String loginPlayer(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("token")) {
+                token = cookie.getValue();
+            }
+        }
+        return token;
+        /*Algorithm algorithm = Algorithm.HMAC256("QU1510");
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = jwtVerifier.verify(token);
+        String username = decodedJWT.getSubject();
+        Player player = playerService.getPlayerByName(username);
+        return player.getId();*/
     }
 
     @GetMapping("/player")
