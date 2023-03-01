@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,6 +17,7 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private Integer score;
+    private LocalDateTime playedDateTime;
     @JsonIgnore
     @ManyToOne
     private Player player;

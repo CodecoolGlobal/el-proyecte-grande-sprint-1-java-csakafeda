@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public class Game {
     @ManyToOne
     @JsonIgnore
     private Player creator;
+    private LocalDateTime createdDateTime;
     @ElementCollection
     private Set<Category> categories;
     private Difficulty difficulty;
