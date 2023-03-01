@@ -13,6 +13,7 @@ import com.example.quizio.database.repository.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +43,10 @@ public class GameService {
             Optional<Category[]> categories
     ) {
         Question[] questions = questionService.getMultipleQuestions(QUESTION_LENGTH, difficulty, categories);
-        Game.GameBuilder gameBuilder = Game.builder().questions(List.of(questions)).creator(playerRepository.getById(createdBy));
+        Game.GameBuilder gameBuilder = Game.builder()
+                .questions(List.of(questions))
+                .creator(playerRepository.getById(createdBy))
+                .createdDateTime(LocalDateTime.now());
         difficulty.ifPresent(gameBuilder::difficulty);
         categories.ifPresent(value -> gameBuilder.categories(Set.of(value)));
         Game game = gameBuilder.build();
@@ -56,7 +60,7 @@ public class GameService {
         if (game.isEmpty() || player.isEmpty()) {
             throw new BadRequestException("Game or player doesn't exist.");
         }
-        scoreRepository.save(Score.builder().game(game.get()).player(player.get()).score(score).build());
+        scoreRepository.save(Score.builder().game(game.get()).player(player.get()).score(score).playedDateTime(LocalDateTime.now()).build());
     }
 
     public Set<Game> loadGameByPlayerNameOrIdOrEmail(
@@ -77,5 +81,11 @@ public class GameService {
             return gameRepository.findAllByCreatorEmail(playerEmail);
         }
         throw new BadRequestException("None provided field exists in database.");
+    }
+
+    public Integer getHighScoreByGameId(Long gameId) {
+        Optional<Integer> highScore = scoreRepository.searchScoreByGame_Id(gameId).stream().map(Score::getScore).max(Integer::compare);
+        if (highScore.isEmpty()) return null;
+        return highScore.get();
     }
 }

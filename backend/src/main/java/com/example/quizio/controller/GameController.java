@@ -1,8 +1,8 @@
 package com.example.quizio.controller;
 
+import com.example.quizio.controller.dto.GameSearchDTO;
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
-import com.example.quizio.database.repository.Game;
 import com.example.quizio.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class GameController {
@@ -40,11 +41,13 @@ public class GameController {
     }
 
     @GetMapping("/loadgame")
-    public Set<Game> loadCreatedGames(
+    public Set<GameSearchDTO> loadCreatedGames(
             @RequestParam(required = false) Long playerId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email
     ) {
-        return gameService.loadGameByPlayerNameOrIdOrEmail(playerId, name, email);
+        return gameService.loadGameByPlayerNameOrIdOrEmail(playerId, name, email).stream()
+                .map(game -> new GameSearchDTO(game.getId(), game.getDifficulty(), game.getCategories(), gameService.getHighScoreByGameId(game.getId())))
+                .collect(Collectors.toSet());
     }
 }
