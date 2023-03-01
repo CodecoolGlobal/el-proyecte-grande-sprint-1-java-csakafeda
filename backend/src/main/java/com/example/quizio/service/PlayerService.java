@@ -30,7 +30,7 @@ public class PlayerService implements UserDetailsService {
         return playerRepository.save(player);
     }
 
-    public Long getIdFromPlayer(Player player) {
+    public Player getIdAndNameFromPlayer(Player player) {
 
         if (!playerRepository.existsByName(player.getName())) {
             throw new UsernameNotFoundException("Username " + player.getName() + "was not found in database.");
@@ -42,7 +42,7 @@ public class PlayerService implements UserDetailsService {
             throw new PasswordDoesNotMatchException("Provided passwords do not match.");
         }
 
-        return fullPlayerEntity.getId();
+        return fullPlayerEntity;
     }
 
     @Override

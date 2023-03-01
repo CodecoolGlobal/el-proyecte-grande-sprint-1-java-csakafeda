@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { isUserSignedIn, signUserOut } from "../Tools/userTools";
+import { getPlayerName, isUserSignedIn, signUserOut } from "../Tools/userTools";
 import "./Layout.css";
 import Button from "@mui/material/Button";
 import { AppBar, Toolbar, Typography } from "@mui/material";
@@ -9,20 +9,60 @@ export default function Layout() {
 
   const location = useLocation();
 
+  const playerName = getPlayerName();
+
+  const welcomeWords = [
+    "Hello",
+    "Hola",
+    "Ciao",
+    "Bonjour",
+    "Guten Tag",
+    "Hej",
+    "Hallo",
+    "Hei",
+    "Aloha",
+    "Salam",
+    "Namaste",
+    "Sawubona",
+    "Sveiki",
+    "Szia",
+    "Kamusta",
+    "Salamatak",
+    "Salam aleikum",
+    "Sawadee ka",
+    "Privet",
+    "Merhaba",
+    "Konnichiwa",
+    "Annyeonghaseyo",
+    "Ni hao",
+    "Zdravstvuyte",
+    "Asalaam alaikum",
+  ];
+
+  function randomGreeting() {
+    return welcomeWords[Math.floor(Math.random() * welcomeWords.length)];
+  }
+
   return (
     <>
       <AppBar
         position="static"
         color="default"
         elevation={0}
-        sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
+        sx={{
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
       >
         <Toolbar sx={{ flexWrap: "wrap" }}>
           <Typography
             variant="h4"
             color="inherit"
             noWrap
-            sx={{ flexGrow: 1, cursor: "pointer", userSelect: "none" }}
+            sx={{
+              cursor: "pointer",
+              userSelect: "none",
+              flexGrow: 1,
+            }}
             onClick={() => navigate("/")}
           >
             Quiz.io
@@ -30,10 +70,18 @@ export default function Layout() {
 
           {isUserSignedIn() && location.pathname !== "/profile" ? (
             <>
+              <Typography
+                variant="h4"
+                color="inherit"
+                noWrap
+                sx={{ userSelect: "none", flexGrow: 1 }}
+              >
+                {randomGreeting()} {playerName}!
+              </Typography>
               <nav>
                 <Button
                   variant="outlined"
-                  sx={{ my: 1, mx: 1.5 }}
+                  sx={{ mx: 1.5, flexGrow: 0.5 }}
                   onClick={() => {
                     navigate("/profile");
                   }}
@@ -44,7 +92,7 @@ export default function Layout() {
               <nav>
                 <Button
                   variant="outlined"
-                  sx={{ my: 1, mx: 1.5 }}
+                  sx={{ mx: 1.5, flexGrow: 0.5 }}
                   onClick={() => {
                     signUserOut();
                     navigate("/login");
@@ -56,10 +104,18 @@ export default function Layout() {
             </>
           ) : isUserSignedIn() ? (
             <>
+              <Typography
+                variant="h4"
+                color="inherit"
+                noWrap
+                sx={{ userSelect: "none", flexGrow: 1 }}
+              >
+                {randomGreeting()} {playerName}!
+              </Typography>
               <nav>
                 <Button
                   variant="outlined"
-                  sx={{ my: 1, mx: 1.5 }}
+                  sx={{ mx: 1.5, flexGrow: 1 }}
                   onClick={() => {
                     signUserOut();
                     navigate("/login");
@@ -73,7 +129,7 @@ export default function Layout() {
             <>
               <Button
                 variant="outlined"
-                sx={{ my: 1, mx: 1.5 }}
+                sx={{ mx: 1.5 }}
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -81,7 +137,7 @@ export default function Layout() {
               <Button
                 color="secondary"
                 variant="outlined"
-                sx={{ my: 1, mx: 1.5 }}
+                sx={{ my: 1 }}
                 onClick={() => navigate("/signup")}
               >
                 Sign up
