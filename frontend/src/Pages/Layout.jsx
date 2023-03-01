@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { isUserSignedIn, signUserOut } from "../Tools/userTools";
+import { getPlayerName, isUserSignedIn, signUserOut } from "../Tools/userTools";
 import "./Layout.css";
 import Button from "@mui/material/Button";
 import { AppBar, Toolbar, Typography } from "@mui/material";
@@ -8,6 +8,40 @@ export default function Layout() {
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const playerName = getPlayerName();
+
+  const welcomeWords = [
+    "Hello",
+    "Hola",
+    "Ciao",
+    "Bonjour",
+    "Guten Tag",
+    "Hej",
+    "Hallo",
+    "Hei",
+    "Aloha",
+    "Salam",
+    "Namaste",
+    "Sawubona",
+    "Sveiki",
+    "Szia",
+    "Kamusta",
+    "Salamatak",
+    "Salam aleikum",
+    "Sawadee ka",
+    "Privet",
+    "Merhaba",
+    "Konnichiwa",
+    "Annyeonghaseyo",
+    "Ni hao",
+    "Zdravstvuyte",
+    "Asalaam alaikum",
+  ];
+
+  function randomGreeting() {
+    return welcomeWords[Math.floor(Math.random() * welcomeWords.length)];
+  }
 
   return (
     <>
@@ -30,6 +64,14 @@ export default function Layout() {
 
           {isUserSignedIn() && location.pathname !== "/profile" ? (
             <>
+              <Typography
+                variant="h4"
+                color="inherit"
+                noWrap
+                sx={{ userSelect: "none", textAlign: "center", flexGrow: 1 }}
+              >
+                {randomGreeting()} {playerName}!
+              </Typography>
               <nav>
                 <Button
                   variant="outlined"
@@ -56,6 +98,14 @@ export default function Layout() {
             </>
           ) : isUserSignedIn() ? (
             <>
+              <Typography
+                variant="h4"
+                color="inherit"
+                noWrap
+                sx={{ userSelect: "none", textAlign: "center", flexGrow: 1 }}
+              >
+                {randomGreeting()} {playerName}!
+              </Typography>
               <nav>
                 <Button
                   variant="outlined"
