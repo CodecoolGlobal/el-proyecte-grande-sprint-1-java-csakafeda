@@ -78,4 +78,10 @@ public class GameService {
         }
         throw new BadRequestException("None provided field exists in database.");
     }
+
+    public Integer getHighScoreByGameId(Long gameId) {
+        Optional<Integer> highScore = scoreRepository.searchScoreByGame_Id(gameId).stream().map(Score::getScore).max(Integer::compare);
+        if (highScore.isEmpty()) return null;
+        return highScore.get();
+    }
 }
