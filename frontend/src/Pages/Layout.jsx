@@ -56,7 +56,11 @@ export default function Layout() {
             variant="h4"
             color="inherit"
             noWrap
-            sx={{ flexGrow: 1, cursor: "pointer", userSelect: "none" }}
+            sx={{
+              flexGrow: 1,
+              cursor: "pointer",
+              userSelect: "none",
+            }}
             onClick={() => navigate("/")}
           >
             Quiz.io
@@ -68,7 +72,7 @@ export default function Layout() {
                 variant="h4"
                 color="inherit"
                 noWrap
-                sx={{ userSelect: "none", textAlign: "center", flexGrow: 1 }}
+                sx={{ userSelect: "none", textAlign: "center", flexGrow: 5 }}
               >
                 {randomGreeting()} {playerName}!
               </Typography>
