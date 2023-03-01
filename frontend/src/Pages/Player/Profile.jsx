@@ -1,10 +1,25 @@
 import "../Layout.css";
-import { getPlayerId } from "../../Tools/userTools";
-import { List, ListItem, ListItemText, ListItemButton } from "@mui/material";
+import { getPlayerId, getPlayerName } from "../../Tools/userTools";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  Avatar,
+  Typography,
+  Button,
+} from "@mui/material";
 import { useState } from "react";
 import { useEffect } from "react";
 const baseUrl = "/api/player";
 import Collapse from "@mui/material/Collapse";
+import { Stack } from "@mui/system";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import QuizIcon from "@mui/icons-material/Quiz";
+import { useNavigate } from "react-router-dom";
+import { Divider } from "@mui/material";
 
 export default function Profile() {
   async function getPlayerData() {
@@ -20,6 +35,8 @@ export default function Profile() {
 
   const [open, setOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleClick = () => {
     setOpen(!open);
   };
@@ -31,6 +48,10 @@ export default function Profile() {
     });
   }, []);
 
+  function getStartingCharacterFromPlayerName() {
+    return player.name.charAt(0).toUpperCase();
+  }
+
   return (
     <>
       {loading ? (
@@ -39,70 +60,186 @@ export default function Profile() {
         </>
       ) : (
         <>
-          <List>
-            <ListItem key={"PlayerId" + player.id}>
-              <ListItemText primary={player.id} secondary="Player Id" />
-            </ListItem>
-            <ListItem key={"PlayerName" + player.name}>
-              <ListItemText primary={player.name} secondary="Player name" />
-            </ListItem>
-            <ListItem key={"PlayerEmail" + player.email}>
-              <ListItemText primary={player.email} secondary="Player e-mail" />
-            </ListItem>
-            <ListItemButton
-              onClick={handleClick}
-              key={"CreatedGames" + player.id}
+          <Stack direction="column" justifyContent="center" alignItems="center">
+            <Avatar
+              src="https://images.unsplash.com/photo-1558730234-d8b2281b0d00?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fG1hbiUyMGJsYWNrJTIwYW5kJTIwd2hpdGV8ZW58MHx8MHx8&w=1000&q=80"
+              // If we create field in the database for player avatar image link we can use that here like "player.avatar" :)
+              sx={{
+                height: "12rem",
+                width: "12rem",
+                fontSize: "5rem",
+                backgroundColor: "salmon",
+                color: "antiquewhite",
+                marginTop: "2rem",
+                my: 4,
+              }}
             >
-              <ListItemText primary="Created games" />
-            </ListItemButton>
+              {getStartingCharacterFromPlayerName()}
+              {/* if no avatar link in the database we can use the starting
+              character of player name */}
+            </Avatar>
+            <Typography
+              variant="h5"
+              color="inherit"
+              noWrap
+              sx={{
+                userSelect: "none",
+                color: "antiquewhite",
+                my: 1.5,
+                height: "2rem",
+              }}
+            >
+              Your userID: {player.id}
+            </Typography>
+            <Stack direction="row" justifyContent="center">
+              <Typography
+                variant="h5"
+                color="inherit"
+                noWrap
+                sx={{
+                  userSelect: "none",
+                  color: "antiquewhite",
+                  my: 1.5,
+                  height: "2rem",
+                }}
+              >
+                Username: {player.name}
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{ mx: 1.5, my: 1.5, height: "2rem" }}
+                onClick={() => {
+                  navigate("");
+                }}
+              >
+                Edit
+              </Button>
+            </Stack>
+            <Stack direction="row" justifyContent="center">
+              <Typography
+                variant="h5"
+                color="inherit"
+                noWrap
+                sx={{ userSelect: "none", color: "antiquewhite", my: 1.5 }}
+              >
+                Registered e-mail: {player.email}
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{ mx: 1.5, my: 1.5 }}
+                onClick={() => {
+                  navigate("");
+                }}
+              >
+                Edit
+              </Button>
+            </Stack>
+            <Button
+              endIcon={!open ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+              onClick={handleClick}
+              variant="outlined"
+              sx={{ mx: 1.5, my: 1.5 }}
+            >
+              Created Games
+            </Button>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
+              <Stack direction="column" justifyContent="center">
                 {player.createdGames.map((game) => (
-                  <div key={"Container for game id" + game.id}>
-                    <ListItemButton sx={{ pl: 4 }} key={"GameId" + game.id}>
-                      <ListItemText primary={game.id} secondary="Game Id" />
-                    </ListItemButton>
-                    <ListItemButton
-                      sx={{ pl: 4 }}
-                      key={
-                        game.difficulty === null
-                          ? "Mixed" + game.id
-                          : game.difficulty + game.id
-                      }
+                  <div key={game.id}>
+                    <Stack
+                      direction="row"
+                      justifyContent="center"
+                      alignItems="center"
                     >
-                      <ListItemText
-                        primary={
-                          game.difficulty === null ? "Mixed" : game.difficulty
-                        }
-                        secondary="Game difficulty"
+                      <Typography
+                        alignItems="center"
+                        variant="h7"
+                        color="inherit"
+                        noWrap
+                        sx={{
+                          userSelect: "none",
+                          color: "antiquewhite",
+                          my: 1.5,
+                          mx: 1.5,
+                          height: "2rem",
+                        }}
+                      >
+                        Game ID: {game.id}
+                      </Typography>
+                      <Divider
+                        orientation="vertical"
+                        sx={{ height: "2rem", alignSelf: "center" }}
+                      />{" "}
+                      <Typography
+                        variant="h7"
+                        color="inherit"
+                        noWrap
+                        sx={{
+                          userSelect: "none",
+                          color: "antiquewhite",
+                          my: 1.5,
+                          mx: 1.5,
+                          height: "2rem",
+                        }}
+                      >
+                        Difficulty:{" "}
+                        {game.difficulty === null ? "Mixed" : game.difficulty}
+                      </Typography>
+                      <Divider
+                        orientation="vertical"
+                        sx={{ height: "2rem", alignSelf: "center" }}
+                      />{" "}
+                      <Typography
+                        variant="h7"
+                        color="inherit"
+                        noWrap
+                        sx={{
+                          userSelect: "none",
+                          color: "antiquewhite",
+                          my: 1.5,
+                          mx: 1.5,
+                          height: "2rem",
+                        }}
+                      >
+                        Categories:{" "}
+                        {game.categories.length === 0 ? "All" : game.categories}
+                      </Typography>
+                      <Divider
+                        orientation="vertical"
+                        sx={{ height: "2rem", alignSelf: "center" }}
+                      />{" "}
+                      <Typography
+                        variant="h7"
+                        color="inherit"
+                        noWrap
+                        sx={{
+                          userSelect: "none",
+                          color: "antiquewhite",
+                          my: 1.5,
+                          mx: 1.5,
+                          height: "2rem",
+                        }}
+                      >
+                        Game created: !TODO!
+                      </Typography>
+                      <Divider
+                        orientation="vertical"
+                        sx={{ height: "2rem", alignSelf: "center" }}
                       />
-                    </ListItemButton>
-                    <ListItemButton
-                      sx={{ pl: 4 }}
-                      key={
-                        game.categories.length === 0
-                          ? "All" + game.id
-                          : game.categories + game.id
-                      }
-                    >
-                      <ListItemText
-                        primary={
-                          game.categories.length === 0 ? "All" : game.categories
-                        }
-                        secondary="Game categories"
-                      />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }} key={"Todo" + game.id}>
-                      <ListItemText
-                        primary="{game.created}"
-                        secondary="Game created"
-                      />
-                    </ListItemButton>
+                      <Button
+                        endIcon={<QuizIcon />}
+                        variant="outlined"
+                        sx={{ mx: 1.5, my: 1.5, height: "2rem", width: "5rem" }}
+                        onClick={() => navigate("/question-multi/" + game.id)}
+                      >
+                        Play
+                      </Button>
+                    </Stack>
                   </div>
                 ))}
-              </List>
+              </Stack>
             </Collapse>
-          </List>
+          </Stack>
         </>
       )}
     </>
