@@ -17,9 +17,9 @@ public class Score {
     private Long id;
     private Integer score;
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Player player;
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Game game;
 }
