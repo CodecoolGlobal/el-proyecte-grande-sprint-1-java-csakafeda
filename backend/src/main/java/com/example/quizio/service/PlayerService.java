@@ -26,7 +26,7 @@ public class PlayerService {
         return playerRepository.save(player);
     }
 
-    public Long getIdFromPlayer(Player player) {
+    public Player getIdAndNameFromPlayer(Player player) {
 
         if (!playerRepository.existsByName(player.getName())) {
             throw new UsernameNotFoundException("Username " + player.getName() + "was not found in database.");
@@ -38,7 +38,7 @@ public class PlayerService {
             throw new PasswordDoesNotMatchException("Provided passwords do not match.");
         }
 
-        return fullPlayerEntity.getId();
+        return fullPlayerEntity;
     }
 
     public Player loadPlayerByPlayerNameOrIdOrEmail(Long playerId, String name, String email) {
