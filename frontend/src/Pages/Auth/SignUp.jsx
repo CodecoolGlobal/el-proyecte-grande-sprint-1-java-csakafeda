@@ -1,7 +1,7 @@
 import {Box, Button, Container, Stack, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {setPlayerId} from "../../Tools/userTools";
+import {setPlayerId, setPlayerName} from "../../Tools/userTools";
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -16,6 +16,29 @@ export default function SignUp() {
     const handleSecondPasswordChange = e => {
         setSecondPassword(e.target.value);
     }
+
+    const login = (player) => {
+        fetch("/api/player-id-and-name", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                name: player.name,
+                password: player.password,
+            }),
+        }).then((res) => {
+            if (res.status === 200) {
+                res.json().then((data) => {
+                    setPlayerId(data.id);
+                    setPlayerName(data.name);
+                    navigate("/");
+                });
+            }
+        });
+    }
+
     const handleSubmit = e => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -48,7 +71,8 @@ export default function SignUp() {
             if (res.status === 200) {
                 res.json().then(data => {
                     setPlayerId(data.id);
-                    navigate("/");
+                    setPlayerName(data.name);
+                    login(data);
                 })
             }
         })
