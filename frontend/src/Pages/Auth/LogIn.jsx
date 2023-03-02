@@ -32,9 +32,9 @@ export default function LogIn() {
       headers: {
         "Content-Type": "application/json",
       },
+        credentials: "include",
       body: JSON.stringify({
         name: formObject?.username,
-        email: "",
         password: formObject?.password,
       }),
     }).then((res) => {

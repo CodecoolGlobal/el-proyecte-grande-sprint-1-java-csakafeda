@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 
 @Service
@@ -43,6 +44,10 @@ public class PlayerService implements UserDetailsService {
         }
 
         return fullPlayerEntity;
+    }
+
+    public Player getPlayerByName(String name) {
+        return playerRepository.findByName(name);
     }
 
     @Override

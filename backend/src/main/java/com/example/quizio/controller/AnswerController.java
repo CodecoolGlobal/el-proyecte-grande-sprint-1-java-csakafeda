@@ -18,8 +18,8 @@ public class AnswerController {
         this.answerService = answerService;
     }
 
-    @PostMapping("answer")
+    @PostMapping("/answer")
     public int getUserAnswer(@RequestBody AnswerDTO answer) {
-        return answerService.correctAnswerProvider(PlayerAnswer.builder().questionId(answer.questionId()).answerIndex(answer.answerIndex()).build());
+        return answerService.correctAnswerProvider(PlayerAnswer.builder().questionId(answer.getQuestionId()).answerIndex(answer.getAnswerIndex()).build());
     }
 }
