@@ -46,6 +46,10 @@ public class PlayerService implements UserDetailsService {
         return fullPlayerEntity;
     }
 
+    public Player getPlayerByName(String name) {
+        return playerRepository.findByName(name);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         Player player = playerRepository.getPlayerByName(name);
