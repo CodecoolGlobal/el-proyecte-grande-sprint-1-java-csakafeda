@@ -34,23 +34,36 @@ public class CustomFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+        Cookie[] cookies = request.getCookies();
+        boolean isToken = false;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    isToken = true;
+                }
+            }
+        }
+        if (isToken) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         UsernameAndPasswordDTO authenticationRequest;
         try {
             authenticationRequest = new ObjectMapper()
                     .readValue(request.getInputStream(), UsernameAndPasswordDTO.class);
+            UsernamePasswordAuthenticationToken token =
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getName(),
+                            authenticationRequest.getPassword());
+            Authentication authToken = authenticationManager.authenticate(token);
+            if (authToken.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                successfulAuthentication(request, response, authToken);
+            }
+            filterChain.doFilter(request, response);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            filterChain.doFilter(request, response);
         }
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getName(),
-                        authenticationRequest.getPassword());
-        Authentication authToken = authenticationManager.authenticate(token);
-        if (authToken.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-            successfulAuthentication(request, response, authToken);
-        }
-        filterChain.doFilter(request, response);
     }
 
     protected void successfulAuthentication(HttpServletRequest request,
@@ -72,6 +85,7 @@ public class CustomFilter extends OncePerRequestFilter {
         Cookie cookie = new Cookie("token", token);
         cookie.setSecure(true);
         cookie.setHttpOnly(false);
+        cookie.setPath("/");
 
         response.addCookie(cookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

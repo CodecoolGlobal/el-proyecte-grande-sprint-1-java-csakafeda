@@ -24,6 +24,7 @@ public class QuizTokenAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
+        //TODO cookie is null handling (403 frontend handling)
         String token = "";
         if (cookies != null) {
             for (Cookie cookie : cookies) {

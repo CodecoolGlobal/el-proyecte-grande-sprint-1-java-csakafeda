@@ -1,4 +1,15 @@
 package com.example.quizio.controller.dto;
 
-public record AnswerDTO(String questionId, int answerIndex) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AnswerDTO {
+    private String questionId;
+    private int answerIndex;
 }

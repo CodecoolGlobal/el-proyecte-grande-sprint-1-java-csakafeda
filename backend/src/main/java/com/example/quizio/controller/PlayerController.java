@@ -2,10 +2,8 @@ package com.example.quizio.controller;
 
 import com.example.quizio.database.repository.Player;
 import com.example.quizio.service.PlayerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class PlayerController {
@@ -21,21 +19,8 @@ public class PlayerController {
     }
 
     @PostMapping("/player/login")
-    public String loginPlayer(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String token = "";
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                token = cookie.getValue();
-            }
-        }
-        return token;
-        /*Algorithm algorithm = Algorithm.HMAC256("QU1510");
-        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
-        DecodedJWT decodedJWT = jwtVerifier.verify(token);
-        String username = decodedJWT.getSubject();
-        Player player = playerService.getPlayerByName(username);
-        return player.getId();*/
+    public HttpStatus login() {
+        return HttpStatus.ACCEPTED;
     }
 
     @GetMapping("/player")
