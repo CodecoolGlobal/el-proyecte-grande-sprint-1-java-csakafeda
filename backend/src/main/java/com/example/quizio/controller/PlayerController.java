@@ -1,5 +1,7 @@
 package com.example.quizio.controller;
 
+import com.example.quizio.controller.dto.PlayerDTO;
+import com.example.quizio.database.enums.Role;
 import com.example.quizio.database.repository.Player;
 import com.example.quizio.service.PlayerService;
 import org.springframework.http.HttpStatus;
@@ -14,8 +16,14 @@ public class PlayerController {
     }
 
     @PostMapping("/player")
-    public Player saveNewPlayer(@RequestBody Player player) {
-        return playerService.createPlayer(player);
+    public Player saveNewPlayer(@RequestBody PlayerDTO player) {
+        Player newPlayer = Player.builder()
+                .name(player.getName())
+                .email(player.getEmail())
+                .password(player.getPassword())
+                .role(Role.ROLE_PLAYER)
+                .build();
+        return playerService.createPlayer(newPlayer);
     }
 
     @PostMapping("/player/login")
