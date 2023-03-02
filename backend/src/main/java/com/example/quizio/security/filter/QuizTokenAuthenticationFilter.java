@@ -23,6 +23,10 @@ public class QuizTokenAuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+        if (request.getServletPath().equals("/player") && request.getMethod().equals("POST")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         Cookie[] cookies = request.getCookies();
         //TODO cookie is null handling (403 frontend handling)
         String token = "";
