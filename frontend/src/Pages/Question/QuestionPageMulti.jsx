@@ -1,8 +1,8 @@
-import { Button, Container, Grid, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import {Button, Container, Grid, Typography} from "@mui/material";
+import {useEffect, useRef, useState} from "react";
+import {useParams} from "react-router-dom";
 import Loading from "../../Components/Loading";
-import { getPlayerId } from "../../Tools/userTools";
+import {getPlayerId} from "../../Tools/userTools";
 import Counter from "./Counter";
 import PointDisplay from "./PointDisplay";
 import "./QuestionPage.css"
@@ -11,7 +11,7 @@ export default function QuestionPageMulti() {
     const [question, setQuestion] = useState(null);
     const dataFetchedRef = useRef(false);
 
-    const { gameId } = useParams();
+    const {gameId} = useParams();
 
     const [loading, setLoading] = useState(true);
     const [isTimeOut, setIsTimeOut] = useState(false);
@@ -35,8 +35,6 @@ export default function QuestionPageMulti() {
         setQuestionIndex(questionIndex + 1);
     }
 
-
-
     async function saveScore() {
         const baseUrl = "/api/playedgame";
         const res = await fetch(`${baseUrl}?gameId=${gameId}&playerId=${getPlayerId()}&score=${points}`, {
@@ -46,6 +44,7 @@ export default function QuestionPageMulti() {
     }
 
     useEffect(() => {
+        console.log(points);
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
         if (questionIndex < QUESTION_NUMBER) {
@@ -69,24 +68,28 @@ export default function QuestionPageMulti() {
         return await resp.json();
     }
 
-    const handleAnswerSubmit = index => {
+    async function handleAnswerSubmit(index) {
         if (correctAnswerIndex !== null) return;
-        setIsFinished(true);
-        submitAnswerAndGetCorrectIndex(index).then(correctAnswer => {
-            setCorrectAnswerIndex(correctAnswer);
-            if (correctAnswer === index) {
-                setPoints(points + 50 + (timeLeft / TIME_FOR_QUESTION) * 50);
-            }
-            setTimeout(() => {
-                setCorrectAnswerIndex(null);
-                setLoading(true);
-                if (questionIndex < QUESTION_NUMBER) {
-                    fetchNextQuestion().then(() => setIsFinished(false))
-                } else {
-                    saveScore().then(() => setEndGame(true));
+        submitAnswerAndGetCorrectIndex(index)
+            .then(correctAnswer => {
+                setCorrectAnswerIndex(correctAnswer);
+                if (correctAnswer === index) {
+                    let point = points + 50 + (timeLeft / TIME_FOR_QUESTION) * 50
+                    setPoints(point);
+                    console.log(point);
+                    console.log(points);
                 }
-            }, 3000);
-        })
+                setTimeout(() => {
+                    setCorrectAnswerIndex(null);
+                    setLoading(true);
+                    if (questionIndex < QUESTION_NUMBER) {
+                        fetchNextQuestion().then(() => setIsFinished(false))
+                    } else {
+                        saveScore().then(() => setEndGame(true));
+                    }
+                }, 3000);
+            });
+        setIsFinished(true);
     }
 
     const handleTick = tickObject => timeLeft = tickObject.total;
@@ -107,33 +110,34 @@ export default function QuestionPageMulti() {
     }
 
     return (
-        <div>{endGame ? <Container maxWidth="md" align="center" sx={{marginBlock: 6}}><Typography variant="h2">GAME OVER</Typography></Container> : <div>
-            <Container maxWidth="md" sx={{ minHeight: 250 }}>
+        <div>{endGame ? <Container maxWidth="md" align="center" sx={{marginBlock: 6}}><Typography variant="h2">GAME
+            OVER</Typography></Container> : <div>
+            <Container maxWidth="md" sx={{minHeight: 250}}>
                 {isTimeOut ?
                     <Container maxWidth="md" align="center"><h1>You weren't fast enough!</h1></Container> : loading ?
-                        <h1><Loading /></h1> : <>
+                        <h1><Loading/></h1> : <>
                             <h1 align="center">{question.question}</h1>
                             <Grid
                                 container
                                 textAlign="center"
                                 spacing={3}
-                                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                                columnSpacing={{xs: 1, sm: 2, md: 3}}
                             >
                                 {question.answers.map((answer, index) => (
                                     <Grid key={index} item xs={6}>
                                         <Button variant="contained"
-                                            className={correctAnswerIndex === index ? "correct" : null}
-                                            sx={{ width: "100%" }} size="large" key={index}
-                                            onClick={() => handleAnswerSubmit(index)}>{answer}</Button>
+                                                className={correctAnswerIndex === index ? "correct" : null}
+                                                sx={{width: "100%"}} size="large" key={index}
+                                                onClick={() => handleAnswerSubmit(index)}>{answer}</Button>
                                     </Grid>
                                 ))}
                             </Grid>
                         </>}
             </Container>
             <Counter time={TIME_FOR_QUESTION} key={loading} onTick={handleTick} onComplete={handleTimeOut}
-                isFinished={isFinished} />
+                     isFinished={isFinished}/>
         </div>}
-            <PointDisplay points={points} />
+            <PointDisplay points={points}/>
         </div>
     );
 }
