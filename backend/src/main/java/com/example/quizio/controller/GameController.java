@@ -42,11 +42,12 @@ public class GameController {
 
     @GetMapping("/loadgame")
     public Set<GameSearchDTO> loadCreatedGames(
-            @RequestParam(required = false) Long playerId,
+            @RequestParam(required = false) Long gameId,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email
+            @RequestParam(required = false) Difficulty difficulty,
+            @RequestParam(required = false) Set<Category> categories
     ) {
-        return gameService.loadGameByPlayerNameOrIdOrEmail(playerId, name, email).stream()
+        return gameService.loadGamesByParams(gameId, name, difficulty, categories).stream()
                 .map(game -> new GameSearchDTO(game.getId(), game.getDifficulty(), game.getCategories(), gameService.getHighScoreByGameId(game.getId())))
                 .collect(Collectors.toSet());
     }
