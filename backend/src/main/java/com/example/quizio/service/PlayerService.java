@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 
 @Service
@@ -22,10 +23,15 @@ public class PlayerService implements UserDetailsService {
     }
 
     public Player createPlayer(Player player) {
+        if (playerRepository.existsByName(player.getName())) {
+            throw new EntityExistsException("Sorry but this username is used by someone else!");
+        } else if (playerRepository.existsByEmail(player.getEmail())) {
+            throw new EntityExistsException("Sorry but this e-mail address is already registered!");
+        }
         return playerRepository.save(player);
     }
 
-    public Long getIdFromPlayer(Player player) {
+    public Player getIdAndNameFromPlayer(Player player) {
 
         if (!playerRepository.existsByName(player.getName())) {
             throw new UsernameNotFoundException("Username " + player.getName() + "was not found in database.");
@@ -37,7 +43,7 @@ public class PlayerService implements UserDetailsService {
             throw new PasswordDoesNotMatchException("Provided passwords do not match.");
         }
 
-        return fullPlayerEntity.getId();
+        return fullPlayerEntity;
     }
 
     public Player getPlayerByName(String name) {

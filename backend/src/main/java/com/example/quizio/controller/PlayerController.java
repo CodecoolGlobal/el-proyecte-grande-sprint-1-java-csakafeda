@@ -23,6 +23,11 @@ public class PlayerController {
         return HttpStatus.ACCEPTED;
     }
 
+    @PatchMapping("/player-id-and-name")
+    public Player getPlayerIdAndNameFromPlayerEntity(@RequestBody Player player) {
+        return playerService.getIdAndNameFromPlayer(player);
+    }
+
     @GetMapping("/player")
     public Player getPlayerByIdOrNameOrEmail(
             @RequestParam(required = false) Long playerId,

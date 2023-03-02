@@ -1,8 +1,10 @@
 package com.example.quizio.database.repository;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -11,13 +13,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 public class Score {
-    @EmbeddedId
-    private PlayerGameId playerGameId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
     private Integer score;
-    @MapsId("playerId")
-    @ManyToOne(cascade = CascadeType.ALL)
+    private LocalDateTime playedDateTime;
+    @JsonIgnore
+    @ManyToOne
     private Player player;
-    @MapsId("gameId")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToOne
     private Game game;
 }
