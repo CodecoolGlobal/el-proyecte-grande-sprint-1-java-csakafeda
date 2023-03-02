@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CustomFilter extends OncePerRequestFilter {
+    private final Algorithm algorithm;
 
     private final AuthenticationManager authenticationManager;
 
     public CustomFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+        this.algorithm = Algorithm.HMAC256("QU1510");
     }
 
     @Override
@@ -34,6 +36,10 @@ public class CustomFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+        if (request.getServletPath().equals("/player") && request.getMethod().equals("POST")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         Cookie[] cookies = request.getCookies();
         boolean isToken = false;
         if (cookies != null) {
@@ -69,7 +75,6 @@ public class CustomFilter extends OncePerRequestFilter {
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             Authentication authResult) {
-        Algorithm algorithm = Algorithm.HMAC256("QU1510");
         List<String> authorityList = authResult.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
