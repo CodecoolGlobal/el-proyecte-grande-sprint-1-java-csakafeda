@@ -4,7 +4,7 @@ import {
     TextField
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchMultiGamePage() {
@@ -12,8 +12,9 @@ export default function SearchMultiGamePage() {
     const navigate = useNavigate();
 
     const fetchGames = async (name) => {
-        const res = await fetch(`/api/loadgame?name=${name}`)
+        const res = await fetch(`/api/loadgame`)
         const data = await res.json();
+        console.log(data);
         return data;
     }
 
@@ -41,6 +42,10 @@ export default function SearchMultiGamePage() {
         console.log(form);
         handleSearch(form.name);
     }
+
+    useEffect(() => {
+        handleSearch("");
+    }, []);
 
     return <>
         <Container align="center" sx={{ padding: "2rem" }}>
@@ -88,14 +93,16 @@ export default function SearchMultiGamePage() {
                                     <TableCell>{game.id}</TableCell>
                                     <TableCell>{game.difficulty}</TableCell>
                                     <TableCell>{game.highscore}</TableCell>
-                                    <Button variant="contained"
-                                        align="right"
-                                        size="small"
-                                        sx={{ margin: "0.5rem", padding: "0.5rem" }}
-                                        onClick={() => navigate("/question-multi/" + game.id)}
-                                    >
-                                        Start this game!
-                                    </Button>
+                                    <TableCell>
+                                        <Button variant="contained"
+                                            align="right"
+                                            size="small"
+                                            sx={{ margin: "0.5rem", padding: "0.5rem" }}
+                                            onClick={() => navigate("/question-multi/" + game.id)}
+                                        >
+                                            Start this game!
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             )
                             )
