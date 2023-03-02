@@ -1,8 +1,11 @@
 import {
     Box,
-    Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     TextField
 } from "@mui/material";
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -56,6 +59,48 @@ export default function SearchMultiGamePage() {
         return <div title={`by ${highScoreObject.playerName} @ ${highScoreObject.playedDateTime ? highScoreObject.playedDateTime : "somewhen"}`}>{highScoreObject.score ? highScoreObject.score : "-"}</div>
     }
 
+    const GameRow = ({ game }) => {
+        const [open, setOpen] = useState(false);
+
+        return <TableRow key={game.id}>
+            <TableCell>
+                <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+            </TableCell>
+            <TableCell>{formattedDateStringFromISOString(game.createdDateTime)}</TableCell>
+            <TableCell>
+                <Button variant={"text"} size="small" onClick={_e => alert(`In the future, i will redirect you to ${game.createdByName}'s page, whose id is ${game.createdById}`)}>
+                    {game.createdByName}
+                </Button>
+            </TableCell>
+            <TableCell>
+                <HighScoreCell
+                    highScoreObject={game.scores
+                        .reduce((maxValueElement, currentElement) => currentElement.score > maxValueElement.score ? currentElement : maxValueElement, { score: null })
+                    }
+                />
+
+            </TableCell>
+            <TableCell>{game.difficulty}</TableCell>
+            <TableCell sx={{ maxWidth: "10rem" }}>{game.categories.join(", ")}</TableCell>
+            <TableCell>
+                <Button variant="contained"
+                    align="right"
+                    size="small"
+                    sx={{ margin: "0.5rem", padding: "0.5rem" }}
+                    onClick={() => navigate("/question-multi/" + game.id)}
+                >
+                    Start this game!
+                </Button>
+            </TableCell>
+        </TableRow>
+    }
+
     return <>
         <Container align="center" sx={{ padding: "2rem" }}>
             <Box component={"form"} onSubmit={e => handleFormSubmit(e)}>
@@ -99,37 +144,7 @@ export default function SearchMultiGamePage() {
                     </TableHead>
                     <TableBody>
                         {games !== null ?
-                            games.map(game => (
-                                <TableRow key={game.id}>
-                                    <TableCell>{formattedDateStringFromISOString(game.createdDateTime)}</TableCell>
-                                    <TableCell>
-                                        <Button variant={"text"} size="small" onClick={_e => alert(`In the future, i will redirect you to ${game.createdByName}'s page, whose id is ${game.createdById}`)}>
-                                            {game.createdByName}
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <HighScoreCell
-                                            highScoreObject={game.scores
-                                                .reduce((maxValueElement, currentElement) => currentElement.score > maxValueElement.score ? currentElement : maxValueElement, { score: null })
-                                            }
-                                        />
-
-                                    </TableCell>
-                                    <TableCell>{game.difficulty}</TableCell>
-                                    <TableCell sx={{maxWidth: "10rem"}}>{game.categories.join(", ")}</TableCell>
-                                    <TableCell>
-                                        <Button variant="contained"
-                                            align="right"
-                                            size="small"
-                                            sx={{ margin: "0.5rem", padding: "0.5rem" }}
-                                            onClick={() => navigate("/question-multi/" + game.id)}
-                                        >
-                                            Start this game!
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                            )
+                            games.map(game => <GameRow game={game} key={game.id} />)
                             :
                             <></>
                         }
