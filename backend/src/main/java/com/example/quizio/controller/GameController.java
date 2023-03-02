@@ -1,5 +1,6 @@
 package com.example.quizio.controller;
 
+import com.example.quizio.controller.dto.GameScoreDTO;
 import com.example.quizio.controller.dto.GameSearchDTO;
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
@@ -48,7 +49,22 @@ public class GameController {
             @RequestParam(required = false) Set<Category> categories
     ) {
         return gameService.loadGamesByParams(gameId, name, difficulty, categories).stream()
-                .map(game -> new GameSearchDTO(game.getId(), game.getDifficulty(), game.getCategories(), gameService.getHighScoreByGameId(game.getId())))
+                .map(game -> new GameSearchDTO(
+                        game.getId(),
+                        game.getCreator().getName(),
+                        game.getCreator().getId(),
+                        game.getDifficulty(),
+                        game.getCategories(),
+                        game.getPlayers().stream()
+                                .map(scoreEntity -> new GameScoreDTO(
+                                        scoreEntity.getScore(),
+                                        scoreEntity.getPlayer().getName(),
+                                        scoreEntity.getPlayer().getId(),
+                                        scoreEntity.getPlayedDateTime()
+                                        ))
+                                .collect(Collectors.toList()),
+                        game.getCreatedDateTime()
+                ))
                 .collect(Collectors.toSet());
     }
 }
