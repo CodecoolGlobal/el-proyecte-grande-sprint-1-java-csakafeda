@@ -48,6 +48,25 @@ export default function SearchMultiGamePage() {
         handleSearch("");
     }, []);
 
+    const handleSort = (order, orderBy) => {
+        const sortedGames = [...games];
+        sortedGames.sort((a, b) => {
+            if (orderBy === 0) {
+                return order === "asc" ? new Date(a.createdDateTime) - new Date(b.createdDateTime) : new Date(b.createdDateTime) - new Date(a.createdDateTime);
+            }
+            if (orderBy === 1) {
+                return order === "asc" ? b.createdByName.localeCompare(a.createdByName) : a.createdByName.localeCompare(b.createdByName);
+            }
+            if (orderBy === 2) {
+                const highScoreA = a.scores.reduce((maxScore, currentScore) => currentScore.score > maxScore.score ? currentScore : maxScore, { score: null }).score;
+                const highScoreB = b.scores.reduce((maxScore, currentScore) => currentScore.score > maxScore.score ? currentScore : maxScore, { score: null }).score;
+                return order === "asc" ? highScoreB - highScoreA : highScoreA - highScoreB;
+            }
+        })
+        console.log("games sorted.")
+        setGames(sortedGames);
+    };
+
     return <>
         <Container align="center" sx={{ padding: "2rem" }}>
             <Box component={"form"} onSubmit={e => handleFormSubmit(e)}>
@@ -110,6 +129,6 @@ export default function SearchMultiGamePage() {
                 </Stack>
             </Box>
         </Container>
-        <GamesTable games={games} />
+        <GamesTable games={games} handleSort={handleSort} />
     </>
 }

@@ -1,12 +1,30 @@
-import { Box, Button, Collapse, Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, Collapse, Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from "react";
 import { Category, Difficulty } from "../../Tools/staticObjects";
 import { useNavigate } from "react-router-dom";
+import { visuallyHidden } from '@mui/utils';
 
-export default function GamesTable({ games }) {
+export default function GamesTable({ games, handleSort }) {
     const navigate = useNavigate();
+    const [order, setOrder] = useState("desc");
+    const [orderBy, setOrderBy] = useState(0);
+
+    const labelClickHandler = (event, index) => {
+        let newOrder;
+        let newOrderBy = orderBy;
+        if (index === orderBy) {
+            newOrder = order === "asc" ? "desc" : "asc"
+        }
+        else {
+            newOrder = "desc"
+            newOrderBy = index
+        }
+        handleSort(newOrder, newOrderBy);
+        setOrder(newOrder);
+        setOrderBy(newOrderBy);
+    }
 
     const formattedDateStringFromISOString = isoString => {
         if (!isoString) return "-";
@@ -90,15 +108,37 @@ export default function GamesTable({ games }) {
         </>
     }
 
+    const headCells = [
+        "Created at",
+        "Created by",
+        "High score",
+    ]
+
     return <Container align="center" sx={{ padding: "2rem" }}>
         <TableContainer align="center">
             <Table align="center">
                 <TableHead>
                     <TableRow>
                         <TableCell />
-                        <TableCell align="left">Created at</TableCell>
-                        <TableCell align="left">Created by</TableCell>
-                        <TableCell align="left">High score</TableCell>
+                        {headCells.map((cellText, i) =>
+                            <TableCell
+                                key={`tableHead no. ${i}`}
+                                sortDirection={orderBy === i ? order : false}
+                            >
+                                <TableSortLabel
+                                    active={orderBy === i}
+                                    direction={orderBy === i ? order : "asc"}
+                                    onClick={(e) => labelClickHandler(e, i)}
+                                >
+                                    {cellText}
+                                    {orderBy === i ? (
+                                        <Box component="span" sx={visuallyHidden}>
+                                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                        </Box>
+                                    ) : null}
+                                </TableSortLabel>
+                            </TableCell>
+                        )}
                         <TableCell align="left">Difficulty</TableCell>
                         <TableCell align="left">Categories</TableCell>
                         <TableCell align="left"></TableCell>
