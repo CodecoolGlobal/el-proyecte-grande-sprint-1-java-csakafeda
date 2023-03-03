@@ -11,7 +11,7 @@ export default function GamesTable({ games, handleSort }) {
     const [order, setOrder] = useState("desc");
     const [orderBy, setOrderBy] = useState(0);
 
-    const labelClickHandler = (event, index) => {
+    const labelClickHandler = (index) => {
         let newOrder;
         let newOrderBy = orderBy;
         if (index === orderBy) {
@@ -108,7 +108,7 @@ export default function GamesTable({ games, handleSort }) {
         </>
     }
 
-    const headCells = [
+    const sortableHeadCells = [
         "Created at",
         "Created by",
         "High score",
@@ -120,7 +120,7 @@ export default function GamesTable({ games, handleSort }) {
                 <TableHead>
                     <TableRow>
                         <TableCell />
-                        {headCells.map((cellText, i) =>
+                        {sortableHeadCells.map((cellText, i) =>
                             <TableCell
                                 key={`tableHead no. ${i}`}
                                 sortDirection={orderBy === i ? order : false}
@@ -128,7 +128,7 @@ export default function GamesTable({ games, handleSort }) {
                                 <TableSortLabel
                                     active={orderBy === i}
                                     direction={orderBy === i ? order : "asc"}
-                                    onClick={(e) => labelClickHandler(e, i)}
+                                    onClick={(_e) => labelClickHandler(i)}
                                 >
                                     {cellText}
                                     {orderBy === i ? (
