@@ -74,7 +74,7 @@ public class GameService {
         Stream<Game> gameStream = gameRepository.findAll().stream();
         if (playerId != null) gameStream = gameStream.filter(game -> game.getCreator().getId().equals(playerId));
         if (playerName != null) gameStream = gameStream.filter(game -> game.getCreator().getName().equals(playerName));
-        if (difficulty != null) gameStream = gameStream.filter(game -> game.getDifficulty().equals(difficulty));
+        if (difficulty != null) gameStream = gameStream.filter(game -> game.getDifficulty() == null || game.getDifficulty().equals(difficulty));
         if (categories != null) {
             for (Category category : categories) {
                 gameStream = gameStream.filter(game -> game.getCategories().contains(category));
