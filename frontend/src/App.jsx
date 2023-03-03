@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { themeOptions } from "./Theme";
 import QuestionPageSingle from "./Pages/Question/QuestionPageSingle.jsx";
 import QuestionPageMulti from "./Pages/Question/QuestionPageMulti.jsx";
-import SearchMultiGamePage from "./Pages/SearchMultiGamePage.jsx";
+import SearchMultiGamePage from "./Pages/SearchMultiGame/SearchMultiGamePage.jsx";
 import LogIn from "./Pages/Auth/LogIn";
 import SignUp from "./Pages/Auth/SignUp";
 import Profile from "./Pages/Player/Profile";

@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class GameService {
@@ -63,24 +65,22 @@ public class GameService {
         scoreRepository.save(Score.builder().game(game.get()).player(player.get()).score(score).playedDateTime(LocalDateTime.now()).build());
     }
 
-    public Set<Game> loadGameByPlayerNameOrIdOrEmail(
+    public Set<Game> loadGamesByParams(
             Long playerId,
             String playerName,
-            String playerEmail) {
-        if (playerId == null && playerName.isEmpty() && playerEmail.isEmpty()) {
-            throw new BadRequestException(
-                    "Player id & name & email doesn't provided, you must provide one not empty field to get a game!"
-            );
+            Difficulty difficulty,
+            Set<Category> categories
+    ) {
+        Stream<Game> gameStream = gameRepository.findAll().stream();
+        if (playerId != null) gameStream = gameStream.filter(game -> game.getCreator().getId().equals(playerId));
+        if (playerName != null) gameStream = gameStream.filter(game -> game.getCreator().getName().equals(playerName));
+        if (difficulty != null) gameStream = gameStream.filter(game -> game.getDifficulty() == null || game.getDifficulty().equals(difficulty));
+        if (categories != null) {
+            for (Category category : categories) {
+                gameStream = gameStream.filter(game -> game.getCategories().contains(category));
+            }
         }
-
-        if (playerId != null && playerRepository.existsById(playerId)) {
-            return gameRepository.findAllByCreatorId(playerId);
-        } else if (playerRepository.existsByName(playerName)) {
-            return gameRepository.findAllByCreatorName(playerName);
-        } else if (playerRepository.existsByEmail(playerEmail)) {
-            return gameRepository.findAllByCreatorEmail(playerEmail);
-        }
-        throw new BadRequestException("None provided field exists in database.");
+        return gameStream.collect(Collectors.toSet());
     }
 
     public Integer getHighScoreByGameId(Long gameId) {
