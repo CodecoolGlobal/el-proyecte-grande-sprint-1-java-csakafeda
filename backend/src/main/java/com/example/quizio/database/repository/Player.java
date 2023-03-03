@@ -1,5 +1,6 @@
 package com.example.quizio.database.repository;
 
+import com.example.quizio.database.enums.Role;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +19,8 @@ public class Player {
     private String name;
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
     private Set<Score> playedGames;
     @OneToMany(mappedBy = "creator")

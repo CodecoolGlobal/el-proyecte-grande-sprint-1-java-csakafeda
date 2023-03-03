@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnswerDTO {
-    private String questionId;
-    private int answerIndex;
+public class PlayerDTO {
+    private String name;
+    private String email;
+    private String password;
 }
