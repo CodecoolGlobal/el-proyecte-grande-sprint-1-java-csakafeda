@@ -1,5 +1,6 @@
 package com.example.quizio.service;
 
+import com.example.quizio.controller.dto.UsernameAndPasswordDTO;
 import com.example.quizio.controller.exception.BadRequestException;
 import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
@@ -31,15 +32,15 @@ public class PlayerService implements UserDetailsService {
         return playerRepository.save(player);
     }
 
-    public Player getIdAndNameFromPlayer(Player player) {
+    public Player getIdAndNameFromPlayer(UsernameAndPasswordDTO usernameAndPasswordDTO) {
 
-        if (!playerRepository.existsByName(player.getName())) {
-            throw new UsernameNotFoundException("Username " + player.getName() + "was not found in database.");
+        if (!playerRepository.existsByName(usernameAndPasswordDTO.getName())) {
+            throw new UsernameNotFoundException("Username " + usernameAndPasswordDTO.getName() + "was not found in database.");
         }
 
-        Player fullPlayerEntity = playerRepository.getPlayerByName(player.getName());
+        Player fullPlayerEntity = playerRepository.getPlayerByName(usernameAndPasswordDTO.getName());
 
-        if (!player.getPassword().equals(fullPlayerEntity.getPassword())) {
+        if (!usernameAndPasswordDTO.getPassword().equals(fullPlayerEntity.getPassword())) {
             throw new PasswordDoesNotMatchException("Provided passwords do not match.");
         }
 
