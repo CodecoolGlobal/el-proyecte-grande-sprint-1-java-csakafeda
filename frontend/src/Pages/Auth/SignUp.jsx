@@ -18,16 +18,12 @@ export default function SignUp() {
     }
 
     const login = (player) => {
-        fetch("/api/player-id-and-name", {
-            method: "PATCH",
+        fetch(`/api/player/login?username=${player.name}&password=${player.password}`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            credentials: "include",
-            body: JSON.stringify({
-                name: player.name,
-                password: player.password,
-            }),
+            body: ""
         }).then((res) => {
             if (res.status === 200) {
                 res.json().then((data) => {
