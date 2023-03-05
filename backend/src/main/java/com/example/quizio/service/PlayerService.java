@@ -6,10 +6,12 @@ import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.database.repository.Player;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -17,10 +19,15 @@ import java.util.List;
 
 @Service
 public class PlayerService implements UserDetailsService {
+
     private final PlayerRepository playerRepository;
 
-    public PlayerService(PlayerRepository playerRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public PlayerService(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
         this.playerRepository = playerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Player createPlayer(Player player) {
@@ -29,6 +36,7 @@ public class PlayerService implements UserDetailsService {
         } else if (playerRepository.existsByEmail(player.getEmail())) {
             throw new EntityExistsException("Sorry but this e-mail address is already registered!");
         }
+        player.setPassword(passwordEncoder.encode(player.getPassword()));
         return playerRepository.save(player);
     }
 
@@ -40,7 +48,7 @@ public class PlayerService implements UserDetailsService {
 
         Player fullPlayerEntity = playerRepository.getPlayerByName(usernameAndPasswordDTO.getName());
 
-        if (!usernameAndPasswordDTO.getPassword().equals(fullPlayerEntity.getPassword())) {
+        if (!passwordEncoder.matches(usernameAndPasswordDTO.getPassword(), fullPlayerEntity.getPassword())) {
             throw new PasswordDoesNotMatchException("Provided passwords do not match.");
         }
 

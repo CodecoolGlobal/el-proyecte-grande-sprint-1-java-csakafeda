@@ -1,7 +1,8 @@
 package com.example.quizio.security;
 
+import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.security.filter.TokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.quizio.service.PlayerService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,7 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.SessionManagementFilter;
@@ -22,24 +23,27 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+    private final PlayerRepository playerRepository;
 
-    private final UserDetailsService playerService;
+    public SecurityConfig(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
-    @Autowired
-    public SecurityConfig(UserDetailsService playerService) {
-        this.playerService = playerService;
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new PlayerService(playerRepository, passwordEncoder());
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http
                 .getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(playerService)
+                .userDetailsService(userDetailsService())
                 .passwordEncoder(passwordEncoder())
                 .and()
                 .build();
