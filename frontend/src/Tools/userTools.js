@@ -11,3 +11,46 @@ export const signUserOut = () => {
     localStorage.removeItem("playerId");
     redirect("/login");
 }
+
+export const login = (username, password, setMessage, setNavigate) => {
+    fetch(`/api/player/login?username=${username}&password=${password}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: ""
+    }).then((res) => {
+        if (res.status === 203) {
+            setMessage("Password is incorrect.");
+        }
+        if (res.status === 404) {
+            setMessage("Username not found.");
+        }
+        if (res.status === 200) {
+            res.json().then((data) => {
+                setPlayerId(data.id);
+                setPlayerName(data.name);
+                setNavigate("/");
+            });
+        }
+    });
+}
+
+export const signup = (name, email, password, setMessage, setNavigate) => {
+    fetch("/api/player", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name, email, password
+        })
+    })
+        .then(res => {
+            if (res.status === 200) {
+                res.json().then(() => {
+                    login(name, password, setMessage, setNavigate);
+                })
+            }
+        })
+}

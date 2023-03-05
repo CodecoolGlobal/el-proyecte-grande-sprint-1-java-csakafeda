@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {setPlayerId, setPlayerName} from "../../Tools/userTools";
+import {login} from "../../Tools/userTools.js";
 
 export default function LogIn() {
     const navigate = useNavigate();
@@ -27,27 +27,7 @@ export default function LogIn() {
             setErrorMessage("You have to provide a username and a password.");
             return;
         }
-        fetch(`/api/player/login?username=${formObject?.username}&password=${formObject?.password}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: ""
-        }).then((res) => {
-            if (res.status === 203) {
-                setErrorMessage("Password is incorrect.");
-            }
-            if (res.status === 404) {
-                setErrorMessage("Username not found.");
-            }
-            if (res.status === 200) {
-                res.json().then((data) => {
-                    setPlayerId(data.id);
-                    setPlayerName(data.name);
-                    navigate("/");
-                });
-            }
-        });
+        login(formObject?.username, formObject?.password, message => setErrorMessage(message), nav => navigate(nav));
     };
 
     return (

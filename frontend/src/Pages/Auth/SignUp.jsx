@@ -1,7 +1,7 @@
 import {Box, Button, Container, Stack, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {setPlayerId, setPlayerName} from "../../Tools/userTools";
+import {signup} from "../../Tools/userTools";
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -15,24 +15,6 @@ export default function SignUp() {
 
     const handleSecondPasswordChange = e => {
         setSecondPassword(e.target.value);
-    }
-
-    const login = (player) => {
-        fetch(`/api/player/login?username=${player.name}&password=${player.password}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: ""
-        }).then((res) => {
-            if (res.status === 200) {
-                res.json().then((data) => {
-                    setPlayerId(data.id);
-                    setPlayerName(data.name);
-                    navigate("/");
-                });
-            }
-        });
     }
 
     const handleSubmit = e => {
@@ -52,26 +34,7 @@ export default function SignUp() {
             setErrorMessage("The two password are not the same");
             return;
         }
-        fetch("/api/player", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "name": formObject?.username,
-                "email": formObject?.email,
-                "password": formObject?.password
-            })
-        })
-            .then(res => {
-            if (res.status === 200) {
-                res.json().then(data => {
-                    setPlayerId(data.id);
-                    setPlayerName(data.name);
-                    login(data);
-                })
-            }
-        })
+        signup(formObject?.username, formObject?.email, formObject?.password, message => setErrorMessage(message), nav => navigate(nav));
     }
 
     return <Container maxWidth={"sm"} sx={{marginBlock: 2}}>
