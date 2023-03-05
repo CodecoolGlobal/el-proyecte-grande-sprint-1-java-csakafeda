@@ -45,10 +45,11 @@ public class GameService {
             Optional<Category[]> categories
     ) {
         Question[] questions = questionService.getMultipleQuestions(QUESTION_LENGTH, difficulty, categories);
+        Optional<Player> creator = playerRepository.findById(createdBy);
         Game.GameBuilder gameBuilder = Game.builder()
                 .questions(List.of(questions))
-                .creator(playerRepository.getById(createdBy))
                 .createdDateTime(LocalDateTime.now());
+        creator.ifPresent(gameBuilder::creator);
         difficulty.ifPresent(gameBuilder::difficulty);
         categories.ifPresent(value -> gameBuilder.categories(Set.of(value)));
         Game game = gameBuilder.build();

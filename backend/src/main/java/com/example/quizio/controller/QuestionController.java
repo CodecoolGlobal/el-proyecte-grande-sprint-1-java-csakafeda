@@ -7,6 +7,7 @@ import com.example.quizio.database.enums.Difficulty;
 import com.example.quizio.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 
 @RestController
+@RequestMapping("/question")
 public class QuestionController {
     private final QuestionDTO DUMMY_QUESTION = new QuestionDTO("Science", "63adbd6404c68cc1e14b8e2a", new String[]{"df", "df", "sv", "sfd"}, "What type of tree is known for its 'weeping' shape?)");
 
@@ -24,7 +26,7 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("question")
+    @GetMapping
     public QuestionDTO getQuestion(
             @RequestParam Optional<Difficulty> difficulty,
             @RequestParam Optional<Category[]> categories,

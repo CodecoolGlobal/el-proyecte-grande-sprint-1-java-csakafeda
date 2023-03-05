@@ -104,6 +104,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(false);
+        cookie.setPath("/");
 
         response.addCookie(cookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
