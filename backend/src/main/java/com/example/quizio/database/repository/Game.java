@@ -27,8 +27,8 @@ public class Game {
     @ElementCollection
     private Set<Category> categories;
     private Difficulty difficulty;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<Question> questions;
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "game")
     private Set<Score> players;
 }

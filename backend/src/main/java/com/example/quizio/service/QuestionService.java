@@ -66,7 +66,7 @@ public class QuestionService {
                                                         .replace("&", "AND")
                                                         .toUpperCase()))
                                         .build();
-                                questionRepository.save(question);
+                                //questionRepository.save(question);
                                 return question;
                             }
                         }
