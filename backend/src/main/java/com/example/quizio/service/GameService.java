@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,10 +43,10 @@ public class GameService {
             Optional<Category[]> categories
     ) {
         Question[] questions = questionService.getMultipleQuestions(QUESTION_LENGTH, difficulty, categories);
-        Optional<Player> creator = playerRepository.findById(createdBy);
         Game.GameBuilder gameBuilder = Game.builder()
                 .questions(List.of(questions))
                 .createdDateTime(LocalDateTime.now());
+        Optional<Player> creator = playerRepository.findById(createdBy);
         creator.ifPresent(gameBuilder::creator);
         difficulty.ifPresent(gameBuilder::difficulty);
         categories.ifPresent(value -> gameBuilder.categories(Set.of(value)));

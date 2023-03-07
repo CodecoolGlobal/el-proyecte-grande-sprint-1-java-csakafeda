@@ -5,6 +5,7 @@ import com.example.quizio.database.enums.Difficulty;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,4 +28,11 @@ public class Question {
     private String incorrectAnswer3;
     private Category category;
     private Difficulty difficulty;
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "game_questions",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "game_id")
+    )
+    private List<Game> games;
 }

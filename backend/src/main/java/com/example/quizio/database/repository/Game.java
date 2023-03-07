@@ -27,7 +27,12 @@ public class Game {
     @ElementCollection
     private Set<Category> categories;
     private Difficulty difficulty;
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
+    @JoinTable(
+            name = "game_questions",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
     private List<Question> questions;
     @OneToMany(mappedBy = "game")
     private Set<Score> players;
