@@ -1,22 +1,17 @@
 import "../Layout.css";
-import { getPlayerId, getPlayerName } from "../../Tools/userTools";
+import { getPlayerId } from "../../Tools/userTools";
 import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
   Avatar,
   Typography,
   Button,
 } from "@mui/material";
 import { useState } from "react";
 import { useEffect } from "react";
-const baseUrl = "/api/player";
+const baseUrl = "/api/player/player";
 import Collapse from "@mui/material/Collapse";
 import { Stack } from "@mui/system";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import QuizIcon from "@mui/icons-material/Quiz";
 import { useNavigate } from "react-router-dom";
 import { Divider } from "@mui/material";
