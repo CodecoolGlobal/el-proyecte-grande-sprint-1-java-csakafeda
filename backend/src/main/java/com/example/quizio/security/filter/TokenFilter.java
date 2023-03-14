@@ -108,7 +108,5 @@ public class TokenFilter extends OncePerRequestFilter {
 
         response.addCookie(cookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        //TODO error handling
     }
 }
