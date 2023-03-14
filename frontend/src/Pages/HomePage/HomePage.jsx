@@ -208,14 +208,14 @@ export default function HomePage() {
           size="large"
           sx={{ margin: "4rem", padding: "2rem" }}
           gameid={gameId}
-          onClick={async () => {
+          onClick={() => {
             if (!isUserSignedIn())
               alert("You need to be signed in to access this feature.");
             else {
               const searchParams =
                 getCategoryAndDifficultySearchParamForMulti();
-              const gameId = await createNewGame(searchParams);
-              navigate("/question-multi/" + gameId);
+              createNewGame(searchParams)
+                  .then(res => navigate("/question-multi/" + res));
             }
           }}
         >

@@ -1,13 +1,14 @@
 package com.example.quizio.controller;
 
 import com.example.quizio.controller.dto.PlayerDTO;
+import com.example.quizio.controller.dto.UsernameAndPasswordDTO;
 import com.example.quizio.database.enums.Role;
 import com.example.quizio.database.repository.Player;
 import com.example.quizio.service.PlayerService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/player")
 public class PlayerController {
     private final PlayerService playerService;
 
@@ -15,7 +16,7 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @PostMapping("/player")
+    @PostMapping
     public Player saveNewPlayer(@RequestBody PlayerDTO player) {
         Player newPlayer = Player.builder()
                 .name(player.getName())
@@ -26,14 +27,9 @@ public class PlayerController {
         return playerService.createPlayer(newPlayer);
     }
 
-    @PostMapping("/player/login")
-    public HttpStatus login() {
-        return HttpStatus.ACCEPTED;
-    }
-
-    @PatchMapping("/player-id-and-name")
-    public Player getPlayerIdAndNameFromPlayerEntity(@RequestBody Player player) {
-        return playerService.getIdAndNameFromPlayer(player);
+    @PostMapping("/login")
+    public Player getPlayerIdAndNameFromPlayerEntity(@RequestParam String username, @RequestParam String password) {
+        return playerService.getIdAndNameFromPlayer(new UsernameAndPasswordDTO(username, password));
     }
 
     @GetMapping("/player")

@@ -1,14 +1,17 @@
 package com.example.quizio.service;
 
+import com.example.quizio.controller.dto.UsernameAndPasswordDTO;
 import com.example.quizio.controller.exception.BadRequestException;
 import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.database.repository.Player;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -16,10 +19,15 @@ import java.util.List;
 
 @Service
 public class PlayerService implements UserDetailsService {
+
     private final PlayerRepository playerRepository;
 
-    public PlayerService(PlayerRepository playerRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public PlayerService(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
         this.playerRepository = playerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Player createPlayer(Player player) {
@@ -28,18 +36,19 @@ public class PlayerService implements UserDetailsService {
         } else if (playerRepository.existsByEmail(player.getEmail())) {
             throw new EntityExistsException("Sorry but this e-mail address is already registered!");
         }
+        player.setPassword(passwordEncoder.encode(player.getPassword()));
         return playerRepository.save(player);
     }
 
-    public Player getIdAndNameFromPlayer(Player player) {
+    public Player getIdAndNameFromPlayer(UsernameAndPasswordDTO usernameAndPasswordDTO) {
 
-        if (!playerRepository.existsByName(player.getName())) {
-            throw new UsernameNotFoundException("Username " + player.getName() + "was not found in database.");
+        if (!playerRepository.existsByName(usernameAndPasswordDTO.getName())) {
+            throw new UsernameNotFoundException("Username " + usernameAndPasswordDTO.getName() + "was not found in database.");
         }
 
-        Player fullPlayerEntity = playerRepository.getPlayerByName(player.getName());
+        Player fullPlayerEntity = playerRepository.getPlayerByName(usernameAndPasswordDTO.getName());
 
-        if (!player.getPassword().equals(fullPlayerEntity.getPassword())) {
+        if (!passwordEncoder.matches(usernameAndPasswordDTO.getPassword(), fullPlayerEntity.getPassword())) {
             throw new PasswordDoesNotMatchException("Provided passwords do not match.");
         }
 

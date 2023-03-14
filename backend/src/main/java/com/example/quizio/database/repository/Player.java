@@ -21,7 +21,7 @@ public class Player {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "player")
     private Set<Score> playedGames;
     @OneToMany(mappedBy = "creator")
     private Set<Game> createdGames;
