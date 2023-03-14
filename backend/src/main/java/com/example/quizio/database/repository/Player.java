@@ -1,9 +1,10 @@
 package com.example.quizio.database.repository;
 
 import com.example.quizio.database.enums.Role;
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
+
 import java.util.Set;
 
 @Entity

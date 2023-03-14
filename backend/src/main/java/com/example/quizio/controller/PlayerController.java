@@ -8,7 +8,6 @@ import com.example.quizio.service.PlayerService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/player")
 public class PlayerController {
     private final PlayerService playerService;
 
@@ -16,7 +15,7 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @PostMapping
+    @PostMapping("/player")
     public Player saveNewPlayer(@RequestBody PlayerDTO player) {
         Player newPlayer = Player.builder()
                 .name(player.getName())

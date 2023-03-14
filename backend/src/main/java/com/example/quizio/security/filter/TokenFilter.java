@@ -5,6 +5,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.quizio.controller.dto.UsernameAndPasswordDTO;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,11 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,10 +40,6 @@ public class TokenFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/player") && request.getMethod().equals("POST")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         Cookie[] cookies = request.getCookies();
         String token = null;
         boolean isToken = false;
@@ -66,11 +62,14 @@ public class TokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
         } else {
-            UsernameAndPasswordDTO authenticationRequest;
-            try {
-                authenticationRequest = new UsernameAndPasswordDTO(
-                        request.getParameter("username"),
-                        request.getParameter("password"));
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            if (username == null) {
+                filterChain.doFilter(request, response);
+            } else {
+                UsernameAndPasswordDTO authenticationRequest = new UsernameAndPasswordDTO(
+                        username,
+                        password);
                 UsernamePasswordAuthenticationToken newToken =
                         new UsernamePasswordAuthenticationToken(
                                 authenticationRequest.getName(),
@@ -80,8 +79,6 @@ public class TokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     successfulAuthentication(request, response, authToken);
                 }
-                filterChain.doFilter(request, response);
-            } catch (IOException e) {
                 filterChain.doFilter(request, response);
             }
         }

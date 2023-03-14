@@ -1,14 +1,11 @@
 package com.example.quizio.security;
 
 import com.example.quizio.database.PlayerRepository;
-import com.example.quizio.security.filter.TokenFilter;
 import com.example.quizio.service.PlayerService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,12 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.session.SessionManagementFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final PlayerRepository playerRepository;
 
@@ -56,17 +52,32 @@ public class SecurityConfig {
                 .disable()
                 .cors()
                 .disable()
-                .authorizeHttpRequests((auth) -> auth
-                        .antMatchers(HttpMethod.POST, "/player/**").permitAll()
-                        .anyRequest()
-                        .authenticated())
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/player").permitAll()
+                        .anyRequest()
+                        .authenticated());
+                /*.rememberMe((remember) -> remember
+                        .rememberMeServices(rememberMeServices(userDetailsService())))*/
 
-        OncePerRequestFilter oncePerRequestFilter = new TokenFilter(authenticationManager(http));
+        /*OncePerRequestFilter oncePerRequestFilter = new TokenFilter(authenticationManager(http));
 
-        http.addFilterAfter(oncePerRequestFilter, SessionManagementFilter.class);
+        http.addFilterAfter(oncePerRequestFilter, SessionManagementFilter.class);*/
+
+        http.addFilterBefore(new UsernamePasswordAuthenticationFilter(authenticationManager(http)), AuthorizationFilter.class);
 
         return http.build();
     }
+
+    /*@Bean
+    public RememberMeServices rememberMeServices(UserDetailsService userDetailsService) {
+        TokenBasedRememberMeServices.RememberMeTokenAlgorithm encodingAlgorithm =
+                TokenBasedRememberMeServices.RememberMeTokenAlgorithm.SHA256;
+        TokenBasedRememberMeServices rememberMe =
+                new TokenBasedRememberMeServices("QU1210", userDetailsService, encodingAlgorithm);
+        rememberMe.setMatchingAlgorithm(TokenBasedRememberMeServices.RememberMeTokenAlgorithm.SHA256);
+        return rememberMe;
+    }*/
 }

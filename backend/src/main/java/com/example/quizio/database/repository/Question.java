@@ -4,7 +4,7 @@ import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
