@@ -1,6 +1,7 @@
 package com.example.quizio.service;
 
 import com.example.quizio.controller.dto.UsernameAndPasswordDTO;
+import com.example.quizio.controller.exception.BadRequestException;
 import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
@@ -174,7 +175,73 @@ class PlayerServiceTest {
         assertEquals(name, exception.getMessage());
     }
 
+    // loadPlayerByPlayerNameOrIdOrEmail  method tests
+
     @Test
-    void loadPlayerByPlayerNameOrIdOrEmail() {
+    void loadPlayerByPlayerNameOrIdOrEmail_successful_justPlayerId() {
+        Long playerId = 1L;
+        String name = null;
+        String email = null;
+
+        Player player = new Player();
+        player.setId(playerId);
+
+        when(playerRepository.existsById(playerId)).thenReturn(true);
+        when(playerRepository.getPlayerById(playerId)).thenReturn(player);
+
+        Player result = playerService.loadPlayerByPlayerNameOrIdOrEmail(playerId, name, email);
+
+        assertEquals(player, result);
+    }
+
+    @Test
+    void loadPlayerByPlayerNameOrIdOrEmail_successful_justPlayerName() {
+        Long playerId = null;
+        String name = "jani";
+        String email = null;
+
+        Player player = new Player();
+        player.setName(name);
+
+        when(playerRepository.existsByName(name)).thenReturn(true);
+        when(playerRepository.getPlayerByName(name)).thenReturn(player);
+
+        Player result = playerService.loadPlayerByPlayerNameOrIdOrEmail(playerId, name, email);
+
+        Assertions.assertEquals(player, result);
+    }
+
+    @Test
+    void loadPlayerByPlayerNameOrIdOrEmail_successful_justEmail() {
+        Long playerId = null;
+        String name = null;
+        String email = "test@email.com";
+
+        Player player = new Player();
+        player.setEmail(email);
+
+        when(playerRepository.existsByEmail(email)).thenReturn(true);
+        when(playerRepository.getPlayerByEmail(email)).thenReturn(player);
+
+        Player result = playerService.loadPlayerByPlayerNameOrIdOrEmail(playerId, name, email);
+
+        Assertions.assertEquals(player, result);
+    }
+
+    @Test
+    void loadPlayerByPlayerNameOrIdOrEmail_unSuccessful_noProvidedFields() {
+        assertThrows(BadRequestException.class, () -> playerService.loadPlayerByPlayerNameOrIdOrEmail(null, null, null));
+    }
+
+    @Test
+    void loadPlayerByPlayerNameOrIdOrEmail_unSuccessful_invalidFields() {
+        Long playerId = null;
+        String name = "test";
+        String email = "test@test.com";
+
+        when(playerRepository.existsByName(name)).thenReturn(false);
+        when(playerRepository.existsByEmail(email)).thenReturn(false);
+
+        assertThrows(BadRequestException.class, () -> playerService.loadPlayerByPlayerNameOrIdOrEmail(playerId, name, email));
     }
 }
