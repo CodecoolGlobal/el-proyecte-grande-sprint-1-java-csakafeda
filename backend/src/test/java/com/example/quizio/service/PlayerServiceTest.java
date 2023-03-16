@@ -5,16 +5,22 @@ import com.example.quizio.controller.exception.PasswordDoesNotMatchException;
 import com.example.quizio.controller.exception.UsernameNotFoundException;
 import com.example.quizio.database.PlayerRepository;
 import com.example.quizio.database.repository.Player;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EntityExistsException;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.example.quizio.database.enums.Role.ROLE_PLAYER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -119,12 +125,53 @@ class PlayerServiceTest {
         assertThrows(PasswordDoesNotMatchException.class, () -> playerService.getIdAndNameFromPlayer(dto));
     }
 
+
+    // getPlayerByName method test
+
+
     @Test
     void getPlayerByName() {
+        String testPlayer = "Dávid";
+        Player expectedPlayer = new Player();
+        expectedPlayer.setName(testPlayer);
+
+        when(playerRepository.findByName(testPlayer)).thenReturn(expectedPlayer);
+
+        Player actualPlayer = playerService.getPlayerByName(testPlayer);
+
+        assertEquals(expectedPlayer, actualPlayer);
+    }
+
+    //loadUserByUsername method tests
+
+    @Test
+    void loadUserByUsernameWithValidUsername_successful() {
+        String name = "Johnyka";
+        String password = "123";
+        Player player = new Player();
+
+        player.setName(name);
+        player.setPassword(password);
+        player.setRole(ROLE_PLAYER);
+
+        when(playerRepository.getPlayerByName(name)).thenReturn(player);
+
+        List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(player.getRole().name()));
+        User expectedUser = new User(name, password, roles);
+        User actualUser = (User) playerService.loadUserByUsername(name);
+        assertEquals(expectedUser.getUsername(), actualUser.getUsername());
+        assertEquals(expectedUser.getPassword(), actualUser.getPassword());
+        assertEquals(expectedUser.getAuthorities(), actualUser.getAuthorities());
     }
 
     @Test
-    void loadUserByUsername() {
+    void loadUserByUsername_unSuccessful_invalidUsername() {
+        String name = "kicsicsíra";
+        when(playerRepository.getPlayerByName(anyString())).thenReturn(null);
+
+        UsernameNotFoundException exception = Assertions.assertThrows(UsernameNotFoundException.class, () -> playerService.loadUserByUsername(name));
+
+        assertEquals(name, exception.getMessage());
     }
 
     @Test
