@@ -45,10 +45,6 @@ public class TokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        if (request.getServletPath().equals("/player/login") && request.getMethod().equals("POST")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         Cookie[] cookies = request.getCookies();
         String token = null;
         boolean isToken = false;

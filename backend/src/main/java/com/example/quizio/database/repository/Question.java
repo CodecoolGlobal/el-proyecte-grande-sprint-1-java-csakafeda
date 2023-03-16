@@ -2,6 +2,7 @@ package com.example.quizio.database.repository;
 
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,5 +35,6 @@ public class Question {
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "game_id")
     )
+    @JsonIgnore
     private List<Game> games;
 }
