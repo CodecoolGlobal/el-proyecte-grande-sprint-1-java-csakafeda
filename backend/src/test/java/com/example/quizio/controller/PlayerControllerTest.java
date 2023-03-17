@@ -1,5 +1,6 @@
 package com.example.quizio.controller;
 
+import javax.persistence.EntityExistsException;
 import com.example.quizio.controller.dto.PlayerDTO;
 import com.example.quizio.database.repository.Player;
 import com.example.quizio.service.PlayerService;
@@ -31,14 +32,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PlayerControllerTest {
 
     private MockMvc mvc;
-
-    @Autowired
     private PlayerService playerService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
+    public PlayerControllerTest(MockMvc mvc, PlayerService playerService) {
+        this.mvc = mvc;
+        this.playerService = playerService;
+    }
+
     @BeforeEach
     public void setup() {
-        mvc = MockMvcBuilders.standaloneSetup(playerService).build();
+        try{
+            Player initialPlayer = Player.builder()
+                .name("csakafeda3")
+                .email("john@email.com")
+                .password("123")
+                .build();
+            playerService.createPlayer(initialPlayer);
+        }
+        catch (EntityExistsException e) {}
     }
 
     @Test
