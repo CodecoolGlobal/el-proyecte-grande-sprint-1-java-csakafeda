@@ -1,7 +1,9 @@
 package com.example.quizio.controller;
 
+import com.example.quizio.QuizioApplication;
 import com.example.quizio.controller.dto.PlayerDTO;
 import com.example.quizio.database.repository.Player;
+import com.example.quizio.security.SecurityConfig;
 import com.example.quizio.service.PlayerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.persistence.EntityExistsException;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {QuizioApplication.class, SecurityConfig.class})
 @SpringBootTest
 class PlayerControllerTest {
 
