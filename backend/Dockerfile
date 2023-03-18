@@ -1,6 +1,3 @@
-# syntax=docker/dockerfile:1
-# WRITE YOUR INSTRUCTIONS HERE
-
 FROM maven:latest AS build
 COPY . /app
 WORKDIR /app

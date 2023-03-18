@@ -3,11 +3,14 @@ volumes:
   postgres_data:
 services:
   api:
-    build: .
+    build: backend
     ports:
       - "8080:8080"
     depends_on:
       - postgres
+    networks:
+      - spring-postgresql
+      - react-spring
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/quizio
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -24,3 +27,16 @@ services:
       - POSTGRES_DB=quizio
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spring-postgresql
+
+  frontend:
+    build: frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - react-spring
+
+networks:
+  react-spring:
+  spring-postgresql:
