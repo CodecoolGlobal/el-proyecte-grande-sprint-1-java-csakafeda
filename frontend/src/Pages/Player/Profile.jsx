@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
 } from "@mui/material";
+import Loading from "../../Components/Loading";
 import { useState } from "react";
 import { useEffect } from "react";
 const baseUrl = "/api/player/player";
@@ -51,7 +52,7 @@ export default function Profile() {
     <>
       {loading ? (
         <>
-          <p>Loading gecc!</p>
+          <Loading />
         </>
       ) : (
         <>
@@ -73,7 +74,7 @@ export default function Profile() {
               {/* if no avatar link in the database we can use the starting
               character of player name */}
             </Avatar>
-            <Typography component="span" 
+            <Typography component="span"
               variant="h5"
               color="inherit"
               noWrap
@@ -87,7 +88,7 @@ export default function Profile() {
               Your userID: {player.id}
             </Typography>
             <Stack direction="row" justifyContent="center">
-              <Typography component="span" 
+              <Typography component="span"
                 variant="h5"
                 color="inherit"
                 noWrap
@@ -111,7 +112,7 @@ export default function Profile() {
               </Button>
             </Stack>
             <Stack direction="row" justifyContent="center">
-              <Typography component="span" 
+              <Typography component="span"
                 variant="h5"
                 color="inherit"
                 noWrap
@@ -146,7 +147,7 @@ export default function Profile() {
                       justifyContent="center"
                       alignItems="center"
                     >
-                      <Typography component="span" 
+                      <Typography component="span"
                         alignItems="center"
                         variant="h7"
                         color="inherit"
@@ -165,7 +166,7 @@ export default function Profile() {
                         orientation="vertical"
                         sx={{ height: "2rem", alignSelf: "center" }}
                       />{" "}
-                      <Typography component="span" 
+                      <Typography component="span"
                         variant="h7"
                         color="inherit"
                         noWrap
@@ -184,7 +185,7 @@ export default function Profile() {
                         orientation="vertical"
                         sx={{ height: "2rem", alignSelf: "center" }}
                       />{" "}
-                      <Typography component="span" 
+                      <Typography component="span"
                         variant="h7"
                         color="inherit"
                         noWrap
@@ -203,7 +204,7 @@ export default function Profile() {
                         orientation="vertical"
                         sx={{ height: "2rem", alignSelf: "center" }}
                       />{" "}
-                      <Typography component="span" 
+                      <Typography component="span"
                         variant="h7"
                         color="inherit"
                         noWrap
@@ -215,7 +216,7 @@ export default function Profile() {
                           height: "2rem",
                         }}
                       >
-                        Game created: !TODO!
+                        Game created: {game.createdDateTime.slice(0, 10)}
                       </Typography>
                       <Divider
                         orientation="vertical"
