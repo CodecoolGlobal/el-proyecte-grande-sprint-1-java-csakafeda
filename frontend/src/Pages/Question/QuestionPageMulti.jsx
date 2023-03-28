@@ -35,24 +35,27 @@ export default function QuestionPageMulti() {
         setQuestionIndex(questionIndex + 1);
     }
 
-    async function saveScore() {
+    async function saveScore(currentPoint) {
         const baseUrl = "/api/playedgame";
-        const res = await fetch(`${baseUrl}?gameId=${gameId}&playerId=${getPlayerId()}&score=${points}`, {
+        const res = await fetch(`${baseUrl}?gameId=${gameId}&playerId=${getPlayerId()}&score=${currentPoint}`, {
             method: "POST"
         });
         return res.statusText;
     }
 
+    function endQuestion(currentPoint = points) {
+        if (questionIndex < QUESTION_NUMBER) {
+            fetchNextQuestion().then(() => setIsFinished(false))
+        } else {
+            saveScore(currentPoint).then(() => setEndGame(true));
+        }
+    }
+
     useEffect(() => {
-        console.log(points);
         if (dataFetchedRef.current) return;
         dataFetchedRef.current = true;
-        if (questionIndex < QUESTION_NUMBER) {
-            fetchNextQuestion();
-        } else {
-            saveScore().then(() => setEndGame(true));
-        }
-    }, [timeLeft, loading, correctAnswerIndex]);
+        endQuestion();
+    }, [])
 
     const submitAnswerAndGetCorrectIndex = async index => {
         const resp = await fetch("/api/answer", {
@@ -73,20 +76,15 @@ export default function QuestionPageMulti() {
         submitAnswerAndGetCorrectIndex(index)
             .then(correctAnswer => {
                 setCorrectAnswerIndex(correctAnswer);
+                let currentPoint = points;
                 if (correctAnswer === index) {
-                    let point = points + 50 + (timeLeft / TIME_FOR_QUESTION) * 50
-                    setPoints(point);
-                    console.log(point);
-                    console.log(points);
+                    currentPoint += 50 + (timeLeft / TIME_FOR_QUESTION) * 50;
                 }
+                setPoints(currentPoint);
                 setTimeout(() => {
                     setCorrectAnswerIndex(null);
                     setLoading(true);
-                    if (questionIndex < QUESTION_NUMBER) {
-                        fetchNextQuestion().then(() => setIsFinished(false))
-                    } else {
-                        saveScore().then(() => setEndGame(true));
-                    }
+                    endQuestion(currentPoint);
                 }, 3000);
             });
         setIsFinished(true);
@@ -98,14 +96,10 @@ export default function QuestionPageMulti() {
         setIsTimeOut(true);
         setIsFinished(true);
         setLoading(true);
-        if (questionIndex < QUESTION_NUMBER) {
-            fetchNextQuestion();
-        } else {
-            saveScore().then(() => setEndGame(true));
-        }
         setTimeout(() => {
             setIsTimeOut(false);
             setIsFinished(false);
+            endQuestion();
         }, 1000)
     }
 
