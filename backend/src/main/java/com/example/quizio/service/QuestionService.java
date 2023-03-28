@@ -41,8 +41,8 @@ public class QuestionService {
         TriviaApiDAO[] questionsFromApi = getQuestionsFromTriviaApi(length, difficulty, categories);
         return Arrays.stream(questionsFromApi)
                 .map(questionDTO -> {
-                            if (questionRepository.existsById(questionDTO.id())) {
-                                return questionRepository.getById(questionDTO.id());
+                            if (questionRepository.findById(questionDTO.id()).isPresent()) {
+                                return questionRepository.findById(questionDTO.id()).get();
                             } else {
                                 Question question = Question.builder()
                                         .question(questionDTO.question())
@@ -51,8 +51,20 @@ public class QuestionService {
                                         .incorrectAnswer2(questionDTO.incorrectAnswers()[1])
                                         .incorrectAnswer3(questionDTO.incorrectAnswers()[2])
                                         .correctAnswer(questionDTO.correctAnswer())
-                                        .category(Category.valueOf(questionDTO.category().replace(" ", "_").replace("&", "AND").toUpperCase()))
-                                        .difficulty(Difficulty.valueOf(questionDTO.difficulty().replace(" ", "_").replace("&", "AND").toUpperCase()))
+                                        .category(Category.valueOf(
+                                                questionDTO
+                                                        .category()
+                                                        .replace(" ", "_")
+                                                        .replace("&", "AND")
+                                                        .toUpperCase()))
+                                        .difficulty(Difficulty.valueOf(
+                                                questionDTO.difficulty() == null ?
+                                                        "EASY" :
+                                                questionDTO
+                                                        .difficulty()
+                                                        .replace(" ", "_")
+                                                        .replace("&", "AND")
+                                                        .toUpperCase()))
                                         .build();
                                 questionRepository.save(question);
                                 return question;

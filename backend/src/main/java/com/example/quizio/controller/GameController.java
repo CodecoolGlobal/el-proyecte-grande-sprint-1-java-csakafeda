@@ -1,5 +1,6 @@
 package com.example.quizio.controller;
 
+import com.example.quizio.controller.dto.GameScoreDTO;
 import com.example.quizio.controller.dto.GameSearchDTO;
 import com.example.quizio.database.enums.Category;
 import com.example.quizio.database.enums.Difficulty;
@@ -42,12 +43,28 @@ public class GameController {
 
     @GetMapping("/loadgame")
     public Set<GameSearchDTO> loadCreatedGames(
-            @RequestParam(required = false) Long playerId,
+            @RequestParam(required = false) Long gameId,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email
+            @RequestParam(required = false) Difficulty difficulty,
+            @RequestParam(required = false) Set<Category> categories
     ) {
-        return gameService.loadGameByPlayerNameOrIdOrEmail(playerId, name, email).stream()
-                .map(game -> new GameSearchDTO(game.getId(), game.getDifficulty(), game.getCategories(), gameService.getHighScoreByGameId(game.getId())))
+        return gameService.loadGamesByParams(gameId, name, difficulty, categories).stream()
+                .map(game -> new GameSearchDTO(
+                        game.getId(),
+                        game.getCreator().getName(),
+                        game.getCreator().getId(),
+                        game.getDifficulty(),
+                        game.getCategories(),
+                        game.getPlayers().stream()
+                                .map(scoreEntity -> new GameScoreDTO(
+                                        scoreEntity.getScore(),
+                                        scoreEntity.getPlayer().getName(),
+                                        scoreEntity.getPlayer().getId(),
+                                        scoreEntity.getPlayedDateTime()
+                                        ))
+                                .collect(Collectors.toList()),
+                        game.getCreatedDateTime()
+                ))
                 .collect(Collectors.toSet());
     }
 }
