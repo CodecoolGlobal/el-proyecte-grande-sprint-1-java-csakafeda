@@ -40,7 +40,7 @@ export default function SignUp() {
     return <Container maxWidth={"sm"} sx={{marginBlock: 2}}>
         <Box onSubmit={handleSubmit} component={"form"}>
             <Stack gap={2}>
-                <Typography variant={"h4"} align="center">Sign Up</Typography>
+                <Typography component="span" variant="h4" align="center">Sign Up</Typography>
                 <TextField variant={"outlined"} name={"username"} label="Username"></TextField>
                 <TextField variant={"outlined"} name={"email"} label="Email"></TextField>
                 <TextField variant={"outlined"}
@@ -62,7 +62,7 @@ export default function SignUp() {
                         instead</Button>
                     <Button variant={"contained"} color={"secondary"} sx={{flexGrow: 1}} type="submit">Submit</Button>
                 </Stack>
-                <Typography variant={"body1"} align="center">{errorMessage}</Typography>
+                <Typography component="span"  variant="body1" align="center">{errorMessage}</Typography>
             </Stack>
 
         </Box>

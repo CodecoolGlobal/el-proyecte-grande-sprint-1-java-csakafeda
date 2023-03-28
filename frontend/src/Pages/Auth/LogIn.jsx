@@ -34,7 +34,7 @@ export default function LogIn() {
         <Container maxWidth={"sm"} sx={{marginBlock: 2}}>
             <Box onSubmit={handleSubmit} component={"form"}>
                 <Stack gap={2}>
-                    <Typography variant={"h4"} align="center">
+                    <Typography component="span" variant="h4" align="center">
                         Log In
                     </Typography>
                     <TextField
@@ -65,7 +65,7 @@ export default function LogIn() {
                             Sign up instead
                         </Button>
                     </Stack>
-                    <Typography variant={"body1"} align="center">
+                    <Typography component="span" variant="body1" align="center">
                         {errorMessage}
                     </Typography>
                 </Stack>
