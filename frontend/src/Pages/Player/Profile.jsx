@@ -73,7 +73,7 @@ export default function Profile() {
               {/* if no avatar link in the database we can use the starting
               character of player name */}
             </Avatar>
-            <Typography
+            <Typography component="span" 
               variant="h5"
               color="inherit"
               noWrap
@@ -87,7 +87,7 @@ export default function Profile() {
               Your userID: {player.id}
             </Typography>
             <Stack direction="row" justifyContent="center">
-              <Typography
+              <Typography component="span" 
                 variant="h5"
                 color="inherit"
                 noWrap
@@ -111,7 +111,7 @@ export default function Profile() {
               </Button>
             </Stack>
             <Stack direction="row" justifyContent="center">
-              <Typography
+              <Typography component="span" 
                 variant="h5"
                 color="inherit"
                 noWrap
@@ -146,7 +146,7 @@ export default function Profile() {
                       justifyContent="center"
                       alignItems="center"
                     >
-                      <Typography
+                      <Typography component="span" 
                         alignItems="center"
                         variant="h7"
                         color="inherit"
@@ -165,7 +165,7 @@ export default function Profile() {
                         orientation="vertical"
                         sx={{ height: "2rem", alignSelf: "center" }}
                       />{" "}
-                      <Typography
+                      <Typography component="span" 
                         variant="h7"
                         color="inherit"
                         noWrap
@@ -184,7 +184,7 @@ export default function Profile() {
                         orientation="vertical"
                         sx={{ height: "2rem", alignSelf: "center" }}
                       />{" "}
-                      <Typography
+                      <Typography component="span" 
                         variant="h7"
                         color="inherit"
                         noWrap
@@ -203,7 +203,7 @@ export default function Profile() {
                         orientation="vertical"
                         sx={{ height: "2rem", alignSelf: "center" }}
                       />{" "}
-                      <Typography
+                      <Typography component="span" 
                         variant="h7"
                         color="inherit"
                         noWrap

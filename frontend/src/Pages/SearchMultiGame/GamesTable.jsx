@@ -80,7 +80,7 @@ export default function GamesTable({ games, handleSort }) {
                 <TableCell sx={{ paddingBlock: 0 }} colSpan={7}>
                     <Collapse in={open} timeout={"auto"} unmountOnExit >
                         <Box sx={{ margin: 1 }}>
-                            <Typography variant="h6" gutterBottom component={"div"}>
+                            <Typography component="span" variant="h6" gutterBottom>
                                 Scoreboard
                             </Typography>
                             <Table size="small" aria-label={"scoreboard"} >

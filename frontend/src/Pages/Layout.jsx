@@ -54,7 +54,7 @@ export default function Layout() {
         }}
       >
         <Toolbar sx={{ flexWrap: "wrap" }}>
-          <Typography
+          <Typography component="span" 
             variant="h4"
             color="inherit"
             noWrap
@@ -70,7 +70,7 @@ export default function Layout() {
 
           {isUserSignedIn() && location.pathname !== "/profile" ? (
             <>
-              <Typography
+              <Typography component="span" 
                 variant="h4"
                 color="inherit"
                 noWrap
@@ -104,7 +104,7 @@ export default function Layout() {
             </>
           ) : isUserSignedIn() ? (
             <>
-              <Typography
+              <Typography component="span" 
                 variant="h4"
                 color="inherit"
                 noWrap

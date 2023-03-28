@@ -104,7 +104,7 @@ export default function QuestionPageMulti() {
     }
 
     return (
-        <div>{endGame ? <Container maxWidth="md" align="center" sx={{marginBlock: 6}}><Typography variant="h2">GAME
+        <div>{endGame ? <Container maxWidth="md" align="center" sx={{marginBlock: 6}}><Typography component="span" variant="h2">GAME
             OVER</Typography></Container> : <div>
             <Container maxWidth="md" sx={{minHeight: 250}}>
                 {isTimeOut ?

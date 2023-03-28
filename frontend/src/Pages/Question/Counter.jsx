@@ -5,7 +5,7 @@ export default function Counter({time, onTick, onComplete, isFinished}) {
     const middleMouseEasterEgg = mouseDownEvent => (mouseDownEvent && mouseDownEvent.button == 1) ? onComplete() : null;
 
     return (
-        <Typography align="center">
+        <Typography component="span" align="center">
             <div className="counter" onMouseDown={middleMouseEasterEgg}>
                 {isFinished ?
                     <div className="stop"></div>
